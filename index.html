@@ -12,35 +12,51 @@
     padding: 10px;
   }
 
-  /* 🔍 Sticky search bar */
+  /* 🔍 Glass-style Sticky search bar */
   .search-bar {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #f4f4f4;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px 0;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
 
   .search-bar input {
     width: 70%;
     padding: 10px;
     font-size: 16px;
-    border: 2px solid #2196F3;
-    border-radius: 25px 0 0 25px;
+    border: none;
     outline: none;
+    border-radius: 25px 0 0 25px;
+    background: rgba(255,255,255,0.3);
+    color: #000;
+    backdrop-filter: blur(8px);
+  }
+
+  .search-bar input::placeholder {
+    color: #333;
   }
 
   .search-bar button {
-    background: #2196F3;
+    background: rgba(33,150,243,0.9);
     border: none;
     color: white;
     padding: 10px 15px;
     border-radius: 0 25px 25px 0;
     cursor: pointer;
     font-size: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .search-bar button:hover {
+    background: rgba(33,150,243,1);
+    transform: scale(1.05);
   }
 
   .grid {
@@ -117,7 +133,7 @@
 </head>
 <body>
 
-  <!-- 🔍 Sticky Search bar -->
+  <!-- 🔍 Glass Search bar -->
   <div class="search-bar">
     <input type="text" id="searchInput" placeholder="Search for games...">
     <button id="searchBtn">🔍</button>
@@ -194,6 +210,15 @@ window.addEventListener("scroll", () => {
 backToTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+/* 🌐 Register service worker for offline caching */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+      .catch(err => console.log('❌ Service Worker failed:', err));
+  });
+}
 </script>
 </body>
 </html>
