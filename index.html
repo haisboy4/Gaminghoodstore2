@@ -12,7 +12,7 @@
     padding: 10px;
   }
 
-  /* 🔍 Glass-style Sticky search bar */
+  /* 🔍 Glass Sticky Search Bar */
   .search-bar {
     position: sticky;
     top: 0;
@@ -23,7 +23,6 @@
     justify-content: center;
     align-items: center;
     padding: 10px 0;
-    border: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
 
@@ -107,7 +106,7 @@
     border-radius: 0 0 10px 10px;
   }
 
-  /* ✨ Glass-style Back to Top button */
+  /* ✨ Glass Back to Top button */
   #backToTop {
     position: fixed;
     bottom: 20px;
@@ -133,7 +132,7 @@
 </head>
 <body>
 
-  <!-- 🔍 Glass Search bar -->
+  <!-- 🔍 Search Bar -->
   <div class="search-bar">
     <input type="text" id="searchInput" placeholder="Search for games...">
     <button id="searchBtn">🔍</button>
@@ -141,26 +140,39 @@
 
   <div id="grid" class="grid"></div>
 
-  <!-- ✨ Glass Back to Top Button -->
+  <!-- ✨ Back to Top -->
   <button id="backToTop" title="Back to top">⬆️</button>
 
 <script>
 const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
 let allGames = [];
 
-fetch(sheetUrl)
-  .then(res => res.text())
-  .then(csv => {
-    const rows = csv.trim().split("\n").slice(1);
-    allGames = rows.map(row => {
-      const [name, Platform, image, link] = row.split(",");
-      return { name, Platform, image, link };
-    });
-    displayGames(allGames);
-  })
-  .catch(() => {
-    document.body.innerHTML += `<p style="color:red;text-align:center;">Failed to load data 😔</p>`;
+// Try to load from network, else from cache
+async function loadGames() {
+  try {
+    const response = await fetch(sheetUrl);
+    const csv = await response.text();
+    localStorage.setItem("cachedCSV", csv); // save locally for offline
+    processCSV(csv);
+  } catch (error) {
+    const cached = localStorage.getItem("cachedCSV");
+    if (cached) {
+      processCSV(cached);
+      console.warn("⚠️ Offline mode: loaded cached data");
+    } else {
+      document.body.innerHTML += `<p style="color:red;text-align:center;">Offline & no cached data 😔</p>`;
+    }
+  }
+}
+
+function processCSV(csv) {
+  const rows = csv.trim().split("\n").slice(1);
+  allGames = rows.map(row => {
+    const [name, Platform, image, link] = row.split(",");
+    return { name, Platform, image, link };
   });
+  displayGames(allGames);
+}
 
 function displayGames(games) {
   const grid = document.getElementById("grid");
@@ -169,7 +181,7 @@ function displayGames(games) {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <img src="${game.image}" alt="${game.name}">
+      <img src="${game.image}" alt="${game.name}" onerror="this.src='fallback.jpg'">
       <div class="info">
         <h3>${game.name}</h3>
         <p>Platform: ${game.Platform}</p>
@@ -189,36 +201,32 @@ document.getElementById("searchInput").addEventListener("input", searchGames);
 
 function searchGames() {
   const query = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = allGames.filter(g => 
+  const filtered = allGames.filter(g =>
     g.name.toLowerCase().includes(query) ||
     g.Platform.toLowerCase().includes(query)
   );
   displayGames(filtered);
 }
 
-/* ⬆️ Back to Top Button functionality */
+/* ⬆️ Back to Top */
 const backToTopBtn = document.getElementById("backToTop");
-
 window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.style.display = "block";
-  } else {
-    backToTopBtn.style.display = "none";
-  }
+  backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
 });
-
 backToTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* 🌐 Register service worker for offline caching */
+/* 🌐 Register service worker */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-      .catch(err => console.log('❌ Service Worker failed:', err));
+      .then(reg => console.log('✅ SW Registered:', reg.scope))
+      .catch(err => console.log('❌ SW Failed:', err));
   });
 }
+
+loadGames();
 </script>
 </body>
 </html>
