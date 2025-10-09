@@ -1,206 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gaming Hood Store</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Store</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 10px;
+    transition: background 0.3s, color 0.3s;
+  }
+  body.dark { background: #1b1b1b; color: #fff; }
 
-  <!-- ✅ Add manifest + theme -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#00C853" />
+  /* 🔍 Glassy search bar */
+  .search-bar {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    display: flex; justify-content: center; align-items: center;
+    gap: 6px; padding: 6px 10px; margin-bottom: 8px;
+  }
+  body.dark .search-bar { background: rgba(40,40,40,0.8); }
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 10px;
-      transition: background 0.3s, color 0.3s;
-    }
+  .search-bar input {
+    flex: 1; padding: 10px; font-size: 16px;
+    border: none; border-radius: 25px; outline: none;
+    background: transparent; color: inherit;
+  }
+  .search-bar button {
+    background: #2196F3; border: none; color: white;
+    padding: 10px 14px; border-radius: 50%;
+    cursor: pointer; font-size: 18px;
+    transition: transform 0.2s;
+  }
+  .search-bar button:hover { transform: scale(1.1); }
 
-    /* 🔍 Search bar with theme toggle */
-    .search-bar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(12px);
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+  /* 🌙 Theme Toggle */
+  #themeToggle { background: #ffcc00; color: #333; }
+  body.dark #themeToggle { background: #333; color: #ffcc00; }
 
-    .search-bar input {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 25px;
-      outline: none;
-      background: rgba(255, 255, 255, 0.7);
-    }
+  /* 🎲 Shuffle Button */
+  #shuffleBtn {
+    display: block; margin: 10px auto;
+    background: linear-gradient(45deg, #2196F3, #21CBF3);
+    color: white; border: none;
+    padding: 10px 25px; border-radius: 30px;
+    cursor: pointer; font-size: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px #21CBF3; }
+    50% { box-shadow: 0 0 25px #2196F3; }
+  }
+  #shuffleBtn:active {
+    transform: rotate(-5deg) scale(0.95);
+    box-shadow: 0 0 25px #21CBF3 inset;
+  }
 
-    .search-bar button, #themeToggle {
-      background: #00C853;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
-      transition: transform 0.2s;
-    }
+  /* 🕹️ Game Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+  }
 
-    .search-bar button:hover, #themeToggle:hover {
-      transform: scale(1.1);
-    }
+  /* 🎮 Game Card */
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: fadeIn 0.6s ease both;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(33,150,243,0.3);
+  }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
+  body.dark .card { background: #2a2a2a; color: #fff; }
+  .card img { width: 100%; height: 140px; object-fit: cover; }
+  .card .info { padding: 10px; flex: 1; }
+  .card h3 { font-size: 16px; margin: 0 0 5px; }
+  .card p { font-size: 13px; color: gray; margin: 0 0 10px; }
+  body.dark .card p { color: #bbb; }
+  .btn {
+    display: block; background: #2196F3; color: white;
+    text-align: center; padding: 8px;
+    text-decoration: none; border-radius: 0 0 12px 12px;
+  }
 
-    .card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s;
-    }
+  /* ⬆️ Back to Top Button */
+  #backToTop {
+    position: fixed; bottom: 25px; right: 25px;
+    background: rgba(255,255,255,0.25); color: #2196F3;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 50%; padding: 12px 15px;
+    font-size: 22px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    backdrop-filter: blur(8px); display: none;
+    transition: all 0.3s ease;
+  }
+  #backToTop:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
+  /* 🌀 Launch Screen */
+  #launchScreen {
+    position: fixed; inset: 0;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+    animation: fadeOut 1s ease 2.5s forwards;
+  }
+  body.dark #launchScreen { background: rgba(0,0,0,0.8); color: white; }
+  @keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+  .loader {
+    border: 4px solid #ddd; border-top: 4px solid #2196F3;
+    border-radius: 50%; width: 40px; height: 40px;
+    animation: spin 1s linear infinite; margin-bottom: 10px;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    .card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-    }
-
-    .card .info {
-      padding: 10px;
-      flex: 1;
-    }
-
-    .btn {
-      display: block;
-      background: #00C853;
-      color: white;
-      text-align: center;
-      padding: 8px;
-      text-decoration: none;
-      border-radius: 0 0 10px 10px;
-    }
-
-    /* ✨ Glass-style Back to Top button */
-    #backToTop {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.25);
-      color: #00C853;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-      padding: 12px 15px;
-      font-size: 22px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      backdrop-filter: blur(8px);
-      display: none;
-      transition: all 0.3s ease;
-    }
-
-    #backToTop:hover { transform: scale(1.1); }
-
-    /* 🌙 Dark Mode */
-    body.dark { background: #121212; color: #e0e0e0; }
-    body.dark .card { background: #1e1e1e; color: white; }
-    body.dark .btn { background: #00E676; }
-  </style>
+  #quote {
+    text-align: center; font-style: italic;
+    margin-top: 5px; color: #777;
+  }
+</style>
 </head>
 <body>
 
-  <!-- 🔍 Search bar -->
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search for games...">
-    <button id="searchBtn">🔍</button>
-    <button id="themeToggle">🌗</button>
-  </div>
+<!-- 🌀 Launch Screen -->
+<div id="launchScreen">
+  <div class="loader"></div>
+  <h3>Loading Games...</h3>
+</div>
 
-  <div id="grid" class="grid"></div>
+<!-- 🔍 Search + Theme -->
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search for games...">
+  <button id="searchBtn">🔍</button>
+  <button id="themeToggle">🌞</button>
+</div>
 
-  <button id="backToTop" title="Back to top">⬆️</button>
+<!-- 🎲 Shuffle -->
+<button id="shuffleBtn">🎲 Shuffle Games</button>
 
-  <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
-    let allGames = [];
+<!-- 💬 Quote -->
+<p id="quote"></p>
 
-    // Load from sheet
-    fetch(sheetUrl)
-      .then(res => res.text())
-      .then(csv => {
-        const rows = csv.trim().split("\n").slice(1);
-        allGames = rows.map(row => {
-          const [name, Platform, image, link] = row.split(",");
-          return { name, Platform, image, link };
-        });
-        displayGames(allGames);
-      })
-      .catch(() => {
-        document.body.innerHTML += `<p style="color:red;text-align:center;">Failed to load data 😔</p>`;
-      });
+<!-- 🕹️ Grid -->
+<div id="grid" class="grid"></div>
 
-    function displayGames(games) {
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
-      games.forEach(g => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${g.image}" alt="${g.name}">
-          <div class="info">
-            <h3>${g.name}</h3>
-            <p>Platform: ${g.Platform}</p>
-          </div>
-          <a class="btn" href="${g.link}" target="_blank">Download</a>
-        `;
-        grid.appendChild(card);
-      });
-    }
+<!-- ⬆️ Back to Top -->
+<button id="backToTop" title="Back to top">⬆️</button>
 
-    // 🔍 Search
-    const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", () => {
-      const q = searchInput.value.toLowerCase();
-      const filtered = allGames.filter(g => g.name.toLowerCase().includes(q) || g.Platform.toLowerCase().includes(q));
-      displayGames(filtered);
+<script>
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
+let allGames = [];
+
+// 🎮 Random quotes
+const quotes = [
+  "“It's dangerous to go alone! Take this.” — Zelda",
+  "“Finish him!” — Mortal Kombat",
+  "“The cake is a lie.” — Portal",
+  "“Stay awhile and listen.” — Diablo",
+  "“War. War never changes.” — Fallout"
+];
+document.getElementById("quote").textContent =
+  quotes[Math.floor(Math.random() * quotes.length)];
+
+fetch(sheetUrl)
+  .then(res => res.text())
+  .then(csv => {
+    const rows = csv.trim().split("\n").slice(1);
+    allGames = rows.map(row => {
+      const [name, Platform, image, link] = row.split(",");
+      return { name, Platform, image, link };
     });
+    displayGames(allGames);
+    setTimeout(() => document.getElementById("launchScreen").remove(), 2500);
+  })
+  .catch(() => {
+    document.body.innerHTML += `<p style="color:red;text-align:center;">Failed to load data 😔</p>`;
+  });
 
-    // 🌗 Theme toggle
-    const toggle = document.getElementById("themeToggle");
-    toggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌗";
-    });
+function displayGames(games) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  games.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${game.image}" alt="${game.name}">
+      <div class="info">
+        <h3>${game.name}</h3>
+        <p>Platform: ${game.Platform}</p>
+      </div>
+      <a class="btn" href="${game.link}" target="_blank">Download</a>
+    `;
+    grid.appendChild(card);
+  });
+}
 
-    // ⬆️ Back to top
-    const backToTopBtn = document.getElementById("backToTop");
-    window.addEventListener("scroll", () => backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none");
-    backToTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+document.getElementById("searchBtn").addEventListener("click", searchGames);
+document.getElementById("searchInput").addEventListener("input", searchGames);
+document.getElementById("shuffleBtn").addEventListener("click", shuffleGames);
 
-    // 🧠 Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
+function searchGames() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = allGames.filter(g => 
+    g.name.toLowerCase().includes(query) ||
+    g.Platform.toLowerCase().includes(query)
+  );
+  displayGames(filtered);
+}
+
+function shuffleGames() {
+  allGames.sort(() => Math.random() - 0.5);
+  displayGames(allGames);
+}
+
+/* ⬆️ Back to Top */
+const backToTopBtn = document.getElementById("backToTop");
+window.addEventListener("scroll", () => {
+  backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
+});
+backToTopBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+/* 🌙 Theme Toggle */
+const themeBtn = document.getElementById("themeToggle");
+themeBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  themeBtn.textContent = document.body.classList.contains("dark") ? "🌙" : "🌞";
+  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+});
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  themeBtn.textContent = "🌙";
+}
+
+/* 📦 Service Worker */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 </body>
 </html>
