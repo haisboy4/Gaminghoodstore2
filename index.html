@@ -972,6 +972,10 @@
     color: #ff4757;
   }
 
+  .post-action.saved {
+    color: var(--accent);
+  }
+
   .comments-section {
     margin-top: 15px;
     border-top: 1px solid rgba(0,0,0,0.1);
@@ -1040,6 +1044,110 @@
     font-size: 48px;
     margin-bottom: 15px;
     opacity: 0.5;
+  }
+
+  /* === ENHANCED SOCIAL FEATURES === */
+  .post-actions-menu {
+    position: relative;
+  }
+  
+  .post-menu-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 18px;
+  }
+  
+  .post-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--surface);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    padding: 10px;
+    z-index: 100;
+    min-width: 120px;
+  }
+  
+  .post-menu button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 5px;
+    color: var(--text);
+  }
+  
+  .post-menu button:hover {
+    background: rgba(0,0,0,0.05);
+  }
+  
+  .comment-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+  }
+  
+  .comment-edit-btn, .comment-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+  
+  .comment-edit-btn:hover {
+    background: rgba(255,107,53,0.1);
+  }
+  
+  .comment-delete-btn:hover {
+    background: rgba(255,71,87,0.1);
+  }
+  
+  .post-reactions {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 10px;
+  }
+  
+  .reactions-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .reaction-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .reaction-btn:hover {
+    background: rgba(255,107,53,0.1);
+    transform: scale(1.2);
+  }
+  
+  .reaction-btn.active {
+    background: rgba(255,107,53,0.2);
+    transform: scale(1.1);
+  }
+  
+  .reactions-count {
+    font-size: 12px;
+    color: var(--text-secondary);
   }
 
   /* === RESPONSIVE DESIGN === */
@@ -1208,7 +1316,7 @@
   </nav>
   
   <div class="sidebar-footer">
-    <p>Gaming Hood v3.0</p>
+    <p>Gaming Hood v4.0</p>
     <p>Built with ❤️ for gamers</p>
   </div>
 </aside>
@@ -1273,6 +1381,14 @@
     </div>
   </div>
 
+  <!-- Favorites Section -->
+  <div id="favoritesSection" style="display: none;">
+    <h2 style="margin-bottom: 20px;">My Favorite Games</h2>
+    <div id="favoritesGrid" class="grid">
+      <!-- Favorite games will be loaded here -->
+    </div>
+  </div>
+
   <!-- Collections Section -->
   <div id="collectionsSection" style="display: none;">
     <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
@@ -1281,14 +1397,6 @@
     </div>
     <div id="collectionsGrid" class="collections-grid">
       <!-- Collections will be loaded here -->
-    </div>
-  </div>
-
-  <!-- Favorites Section -->
-  <div id="favoritesSection" style="display: none;">
-    <h2 style="margin-bottom: 20px;">My Favorite Games</h2>
-    <div id="favoritesGrid" class="grid">
-      <!-- Favorite games will be loaded here -->
     </div>
   </div>
 
@@ -1363,7 +1471,7 @@
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-// === GAMING HOOD - WITH SOCIAL FEED ===
+// === GAMING HOOD - COMPLETE WITH ALL FEATURES ===
 
 // Initialize particles
 particlesJS('particles-js', {
@@ -1584,7 +1692,276 @@ function displayGames(games) {
   }).join('');
 }
 
-// === SOCIAL FEED SYSTEM ===
+// === FIXED FAVORITES SECTION ===
+function showSection(section) {
+  // Hide all sections
+  document.querySelectorAll('[id$="Section"]').forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Update navigation
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+  
+  if (window.innerWidth <= 768) {
+    closeSidebar();
+  }
+  
+  // Show selected section
+  switch(section) {
+    case 'games':
+      document.getElementById('gamesSection').style.display = 'block';
+      displayGames(allGames);
+      break;
+    case 'favorites':
+      document.getElementById('favoritesSection').style.display = 'block';
+      const favoriteGames = allGames.filter(game => favorites.includes(game.id));
+      if (favoriteGames.length > 0) {
+        // Use the same displayGames function but for favorites grid
+        document.getElementById('favoritesGrid').innerHTML = favoriteGames.map(game => {
+          const isFavorite = favorites.includes(game.id);
+          const userRating = currentUser ? (gameRatings[game.id + '_users']?.[currentUser.id] || 0) : 0;
+          const averageRating = game.rating;
+          
+          return `
+            <div class="flip-card" onclick="flipCard(this)">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <button class="favorite-btn active" 
+                          onclick="event.stopPropagation(); toggleFavorite('${game.id}')">
+                    ❤️
+                  </button>
+                  <img src="${game.image}" alt="${game.name}" 
+                       onerror="this.src='https://via.placeholder.com/160x140/666/white?text=🎮'">
+                  <div class="info">
+                    <h3>${game.name}</h3>
+                    <p>${game.Platform}</p>
+                    <div class="rating-container">
+                      <div class="star-rating">
+                        ${[1,2,3,4,5].map(star => 
+                          `<span class="star ${star <= userRating ? 'active' : ''} ${star <= Math.round(averageRating) ? 'community-rated' : ''}" 
+                                onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
+                        ).join('')}
+                      </div>
+                      <div class="rating-text">
+                        ${averageRating > 0 ? `⭐ ${averageRating.toFixed(1)}/5 (${game.ratingCount})` : 'Not rated yet'}
+                        ${userRating > 0 ? `<br><small>Your: ${userRating}/5</small>` : ''}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flip-card-back">
+                  <h3>${game.name}</h3>
+                  <p>${game.Platform}</p>
+                  
+                  <div class="game-stats">
+                    <div class="stat">
+                      <div class="stat-value">${averageRating > 0 ? averageRating.toFixed(1) : '-'}</div>
+                      <div class="stat-label">Rating</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-value">${game.ratingCount}</div>
+                      <div class="stat-label">Votes</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-value">❤️</div>
+                      <div class="stat-label">Favorite</div>
+                    </div>
+                  </div>
+
+                  <a class="btn btn-primary" href="${game.link}" target="_blank" onclick="event.stopPropagation()">
+                    🎮 Download Now
+                  </a>
+                  
+                  ${currentUser ? `
+                    <div class="btn" onclick="event.stopPropagation(); showAddToCollection('${game.id}')">
+                      📚 Add to Collection
+                    </div>
+                    
+                    <div class="rating-container">
+                      <small>Rate this game:</small>
+                      <div class="star-rating">
+                        ${[1,2,3,4,5].map(star => 
+                          `<span class="star ${star <= userRating ? 'active' : ''}" 
+                                onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
+                        ).join('')}
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        document.getElementById('favoritesGrid').innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+            <div style="font-size: 48px; margin-bottom: 15px;">❤️</div>
+            <h3>No Favorite Games Yet</h3>
+            <p>Start adding games to your favorites by clicking the heart icon!</p>
+          </div>
+        `;
+      }
+      break;
+    case 'collections':
+      document.getElementById('collectionsSection').style.display = 'block';
+      if (currentUser) {
+        displayCollections();
+      } else {
+        document.getElementById('collectionsGrid').innerHTML = '<p>Please login to view collections!</p>';
+      }
+      break;
+    case 'social':
+      document.getElementById('socialSection').style.display = 'block';
+      displaySocialFeed();
+      break;
+    case 'top-rated':
+      document.getElementById('topRatedSection').style.display = 'block';
+      const topRatedGames = allGames.filter(game => game.rating >= 4)
+                           .sort((a, b) => b.rating - a.rating);
+      document.getElementById('topRatedGrid').innerHTML = topRatedGames.length > 0 ? 
+        displayGames(topRatedGames) : '<p>No top-rated games yet!</p>';
+      break;
+    case 'achievements':
+      document.getElementById('achievementsSection').style.display = 'block';
+      showAchievementsSection();
+      break;
+  }
+}
+
+// === ENHANCED SOCIAL FEED WITH SURPRISE FEATURES ===
+function displaySocialFeed() {
+  const postsContainer = document.getElementById('postsContainer');
+  
+  if (socialPosts.length === 0) {
+    postsContainer.innerHTML = `
+      <div class="no-posts">
+        <div class="no-posts-icon">💬</div>
+        <h3>No posts yet</h3>
+        <p>Be the first to share your gaming experience with the community!</p>
+        ${currentUser ? `
+          <button onclick="createSamplePost()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-top: 15px;">
+            🎮 Create Sample Post
+          </button>
+        ` : ''}
+      </div>
+    `;
+    return;
+  }
+  
+  postsContainer.innerHTML = socialPosts.map(post => {
+    const game = post.gameId ? allGames.find(g => g.id === post.gameId) : null;
+    const timeAgo = getTimeAgo(post.timestamp);
+    const isLiked = post.likes.includes(currentUser?.id);
+    const likeCount = post.likes.length;
+    const commentCount = post.comments.length;
+    const isOwnPost = currentUser && post.userId === currentUser.id;
+    
+    // 🎉 SURPRISE FEATURE: Post reactions (beyond just likes)
+    const reactions = post.reactions || {};
+    const userReaction = reactions[currentUser?.id];
+    
+    return `
+      <div class="post-card" data-post-id="${post.id}">
+        <div class="post-header">
+          <div class="post-user-avatar" style="background: ${post.userAvatarColor};">
+            ${post.userAvatar ? `<img src="${post.userAvatar}" alt="${post.userName}" class="responsive-avatar">` : post.userName[0].toUpperCase()}
+          </div>
+          <div class="post-user-info">
+            <div class="post-user-name">${post.userName} ${isOwnPost ? '<small style="color: var(--primary);">(You)</small>' : ''}</div>
+            <div class="post-time">${timeAgo}</div>
+          </div>
+          ${isOwnPost ? `
+            <div class="post-actions-menu">
+              <button class="post-menu-btn" onclick="showPostMenu('${post.id}')">⋯</button>
+              <div class="post-menu" id="post-menu-${post.id}" style="display: none;">
+                <button onclick="editPost('${post.id}')">✏️ Edit</button>
+                <button onclick="deletePost('${post.id}')" style="color: #ff4757;">🗑️ Delete</button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="post-content" id="post-content-${post.id}">${post.content}</div>
+        
+        ${game ? `
+          <div class="post-game">
+            <div class="post-game-title">🎮 ${game.name}</div>
+            <div class="post-game-platform">${game.Platform}</div>
+          </div>
+        ` : ''}
+        
+        <!-- 🎉 SURPRISE FEATURE: Post Reactions -->
+        <div class="post-reactions">
+          <div class="reactions-bar">
+            <button class="reaction-btn ${userReaction === 'fire' ? 'active' : ''}" onclick="addReaction('${post.id}', 'fire')">🔥</button>
+            <button class="reaction-btn ${userReaction === 'laugh' ? 'active' : ''}" onclick="addReaction('${post.id}', 'laugh')">😂</button>
+            <button class="reaction-btn ${userReaction === 'mindblown' ? 'active' : ''}" onclick="addReaction('${post.id}', 'mindblown')">🤯</button>
+            <button class="reaction-btn ${userReaction === 'clap' ? 'active' : ''}" onclick="addReaction('${post.id}', 'clap')">👏</button>
+          </div>
+          <div class="reactions-count">
+            ${Object.keys(reactions).length > 0 ? `
+              ${Object.entries(reactions).slice(0, 3).map(([_, reaction]) => {
+                const reactionIcons = { fire: '🔥', laugh: '😂', mindblown: '🤯', clap: '👏' };
+                return reactionIcons[reaction];
+              }).join('')}
+              ${Object.keys(reactions).length > 3 ? `+${Object.keys(reactions).length - 3}` : ''}
+            ` : ''}
+          </div>
+        </div>
+        
+        <div class="post-actions">
+          <button class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+            ${isLiked ? '❤️' : '🤍'} ${likeCount || ''}
+          </button>
+          <button class="post-action" onclick="toggleComments('${post.id}')">
+            💬 ${commentCount || ''}
+          </button>
+          <button class="post-action" onclick="sharePost('${post.id}')">
+            🔗 Share
+          </button>
+          <!-- 🎉 SURPRISE FEATURE: Save Post -->
+          <button class="post-action ${post.savedBy?.includes(currentUser?.id) ? 'saved' : ''}" onclick="toggleSavePost('${post.id}')">
+            ${post.savedBy?.includes(currentUser?.id) ? '⭐' : '✰'} Save
+          </button>
+        </div>
+        
+        <div class="comments-section" id="comments-${post.id}" style="display: none;">
+          <div class="comments-list" id="comments-list-${post.id}">
+            ${post.comments.map(comment => {
+              const isOwnComment = currentUser && comment.userId === currentUser.id;
+              return `
+                <div class="comment" id="comment-${comment.id}">
+                  <div class="comment-header">
+                    <span class="comment-user">${comment.userName} ${isOwnComment ? '<small style="color: var(--primary);">(You)</small>' : ''}</span>
+                    <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
+                    ${isOwnComment ? `
+                      <div class="comment-actions">
+                        <button class="comment-edit-btn" onclick="editComment('${post.id}', '${comment.id}')">✏️</button>
+                        <button class="comment-delete-btn" onclick="deleteComment('${post.id}', '${comment.id}')">🗑️</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                  <div class="comment-content" id="comment-content-${comment.id}">${comment.content}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          ${currentUser ? `
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment('${post.id}')">
+              <button onclick="addComment('${post.id}')" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer;">Post</button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// === SOCIAL FEED FUNCTIONALITY ===
 function updateGameSelect() {
   const gameSelect = document.getElementById('postGameSelect');
   gameSelect.innerHTML = '<option value="">Select a game to tag (optional)...</option>' +
@@ -1615,7 +1992,9 @@ function createPost() {
     gameId: gameId,
     timestamp: new Date().toISOString(),
     likes: [],
-    comments: []
+    comments: [],
+    reactions: {},
+    savedBy: []
   };
   
   socialPosts.unshift(post);
@@ -1629,84 +2008,6 @@ function createPost() {
   displaySocialFeed();
   playSound('postSound');
   unlockAchievement('socializer', 'Community Socializer!', 'You created your first post!');
-}
-
-function displaySocialFeed() {
-  const postsContainer = document.getElementById('postsContainer');
-  
-  if (socialPosts.length === 0) {
-    postsContainer.innerHTML = `
-      <div class="no-posts">
-        <div class="no-posts-icon">💬</div>
-        <h3>No posts yet</h3>
-        <p>Be the first to share your gaming experience with the community!</p>
-      </div>
-    `;
-    return;
-  }
-  
-  postsContainer.innerHTML = socialPosts.map(post => {
-    const game = post.gameId ? allGames.find(g => g.id === post.gameId) : null;
-    const timeAgo = getTimeAgo(post.timestamp);
-    const isLiked = post.likes.includes(currentUser?.id);
-    const likeCount = post.likes.length;
-    const commentCount = post.comments.length;
-    
-    return `
-      <div class="post-card" data-post-id="${post.id}">
-        <div class="post-header">
-          <div class="post-user-avatar" style="background: ${post.userAvatarColor};">
-            ${post.userAvatar ? `<img src="${post.userAvatar}" alt="${post.userName}" class="responsive-avatar">` : post.userName[0].toUpperCase()}
-          </div>
-          <div class="post-user-info">
-            <div class="post-user-name">${post.userName}</div>
-            <div class="post-time">${timeAgo}</div>
-          </div>
-        </div>
-        
-        <div class="post-content">${post.content}</div>
-        
-        ${game ? `
-          <div class="post-game">
-            <div class="post-game-title">🎮 ${game.name}</div>
-            <div class="post-game-platform">${game.Platform}</div>
-          </div>
-        ` : ''}
-        
-        <div class="post-actions">
-          <button class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
-            ${isLiked ? '❤️' : '🤍'} ${likeCount || ''}
-          </button>
-          <button class="post-action" onclick="toggleComments('${post.id}')">
-            💬 ${commentCount || ''}
-          </button>
-          <button class="post-action" onclick="sharePost('${post.id}')">
-            🔗 Share
-          </button>
-        </div>
-        
-        <div class="comments-section" id="comments-${post.id}" style="display: none;">
-          <div class="comments-list" id="comments-list-${post.id}">
-            ${post.comments.map(comment => `
-              <div class="comment">
-                <div class="comment-header">
-                  <span class="comment-user">${comment.userName}</span>
-                  <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
-                </div>
-                <div class="comment-content">${comment.content}</div>
-              </div>
-            `).join('')}
-          </div>
-          ${currentUser ? `
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-              <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment('${post.id}')">
-              <button onclick="addComment('${post.id}')" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer;">Post</button>
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }).join('');
 }
 
 function toggleLike(postId) {
@@ -1798,6 +2099,176 @@ function sharePost(postId) {
   }
 }
 
+// 🎉 SURPRISE FEATURE: Post Reactions
+function addReaction(postId, reaction) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  if (!post.reactions) {
+    post.reactions = {};
+  }
+  
+  // Toggle reaction - if same reaction, remove it
+  if (post.reactions[currentUser.id] === reaction) {
+    delete post.reactions[currentUser.id];
+  } else {
+    post.reactions[currentUser.id] = reaction;
+  }
+  
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+  playSound('favoriteSound');
+}
+
+// 🎉 SURPRISE FEATURE: Save Posts
+function toggleSavePost(postId) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  if (!post.savedBy) {
+    post.savedBy = [];
+  }
+  
+  const userIndex = post.savedBy.indexOf(currentUser.id);
+  if (userIndex > -1) {
+    post.savedBy.splice(userIndex, 1);
+  } else {
+    post.savedBy.push(currentUser.id);
+    unlockAchievement('bookmarker', 'Post Bookmarker!', 'You saved your first post!');
+  }
+  
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+  playSound('favoriteSound');
+}
+
+// 🎉 SURPRISE FEATURE: Sample Post Creator
+function createSamplePost() {
+  if (!currentUser) return;
+  
+  const samplePosts = [
+    "Just discovered an amazing hidden gem in my game collection! The storyline is incredible! 🎮✨",
+    "Anyone else stuck on the final boss? Need some tips and tricks! 💪",
+    "Just achieved 100% completion! This game is a masterpiece! 🏆",
+    "The graphics in this game are absolutely stunning! Can't stop taking screenshots! 📸",
+    "Multiplayer with friends tonight was absolutely hilarious! 😂 Best gaming session ever!"
+  ];
+  
+  const sampleGames = allGames.filter(game => game.rating >= 4);
+  const randomPost = samplePosts[Math.floor(Math.random() * samplePosts.length)];
+  const randomGame = sampleGames.length > 0 ? sampleGames[Math.floor(Math.random() * sampleGames.length)] : null;
+  
+  const post = {
+    id: 'post_' + Date.now(),
+    userId: currentUser.id,
+    userName: currentUser.name,
+    userAvatar: currentUser.avatarUrl || null,
+    userAvatarColor: getAvatarUrl(currentUser),
+    content: randomPost,
+    gameId: randomGame ? randomGame.id : null,
+    timestamp: new Date().toISOString(),
+    likes: [],
+    comments: [],
+    reactions: {},
+    savedBy: []
+  };
+  
+  socialPosts.unshift(post);
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+  playSound('postSound');
+  
+  unlockAchievement('first_post', 'First Post!', 'You created your first post!');
+}
+
+// === COMMENT EDITING & DELETION ===
+function editComment(postId, commentId) {
+  const comment = socialPosts.find(p => p.id === postId)?.comments.find(c => c.id === commentId);
+  if (!comment) return;
+  
+  const commentElement = document.getElementById(`comment-content-${commentId}`);
+  const currentContent = commentElement.textContent;
+  
+  const newContent = prompt('Edit your comment:', currentContent);
+  if (newContent !== null && newContent.trim() !== '' && newContent !== currentContent) {
+    comment.content = newContent.trim();
+    comment.edited = true;
+    localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+    displaySocialFeed();
+    
+    // Keep comments section open
+    document.getElementById(`comments-${postId}`).style.display = 'block';
+  }
+}
+
+function deleteComment(postId, commentId) {
+  if (!confirm('Are you sure you want to delete this comment?')) return;
+  
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  post.comments = post.comments.filter(c => c.id !== commentId);
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+  
+  // Keep comments section open
+  document.getElementById(`comments-${postId}`).style.display = 'block';
+}
+
+// === POST EDITING & DELETION ===
+function showPostMenu(postId) {
+  // Hide all other menus first
+  document.querySelectorAll('.post-menu').forEach(menu => {
+    menu.style.display = 'none';
+  });
+  
+  const menu = document.getElementById(`post-menu-${postId}`);
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function editPost(postId) {
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  const newContent = prompt('Edit your post:', post.content);
+  if (newContent !== null && newContent.trim() !== '' && newContent !== post.content) {
+    post.content = newContent.trim();
+    post.edited = true;
+    localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+    displaySocialFeed();
+  }
+  
+  // Hide menu
+  document.getElementById(`post-menu-${postId}`).style.display = 'none';
+}
+
+function deletePost(postId) {
+  if (!confirm('Are you sure you want to delete this post?')) return;
+  
+  socialPosts = socialPosts.filter(p => p.id !== postId);
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+}
+
+// Close post menus when clicking elsewhere
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.post-actions-menu')) {
+    document.querySelectorAll('.post-menu').forEach(menu => {
+      menu.style.display = 'none';
+    });
+  }
+});
+
 function getTimeAgo(timestamp) {
   const now = new Date();
   const postTime = new Date(timestamp);
@@ -1815,63 +2286,6 @@ function getTimeAgo(timestamp) {
   
   return postTime.toLocaleDateString();
 }
-
-// === SECTION MANAGEMENT ===
-function showSection(section) {
-  // Hide all sections
-  document.querySelectorAll('[id$="Section"]').forEach(section => {
-    section.style.display = 'none';
-  });
-  
-  // Update navigation
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  event.currentTarget.classList.add('active');
-  
-  if (window.innerWidth <= 768) {
-    closeSidebar();
-  }
-  
-  // Show selected section
-  switch(section) {
-    case 'games':
-      document.getElementById('gamesSection').style.display = 'block';
-      displayGames(allGames);
-      break;
-    case 'favorites':
-      document.getElementById('favoritesSection').style.display = 'block';
-      const favoriteGames = allGames.filter(game => favorites.includes(game.id));
-      document.getElementById('favoritesGrid').innerHTML = favoriteGames.length > 0 ? 
-        displayGames(favoriteGames) : '<p>No favorite games yet!</p>';
-      break;
-    case 'collections':
-      document.getElementById('collectionsSection').style.display = 'block';
-      if (currentUser) {
-        displayCollections();
-      } else {
-        document.getElementById('collectionsGrid').innerHTML = '<p>Please login to view collections!</p>';
-      }
-      break;
-    case 'social':
-      document.getElementById('socialSection').style.display = 'block';
-      displaySocialFeed();
-      break;
-    case 'top-rated':
-      document.getElementById('topRatedSection').style.display = 'block';
-      const topRatedGames = allGames.filter(game => game.rating >= 4)
-                           .sort((a, b) => b.rating - a.rating);
-      document.getElementById('topRatedGrid').innerHTML = topRatedGames.length > 0 ? 
-        displayGames(topRatedGames) : '<p>No top-rated games yet!</p>';
-      break;
-    case 'achievements':
-      document.getElementById('achievementsSection').style.display = 'block';
-      showAchievementsSection();
-      break;
-  }
-}
-
-// ... (rest of the existing code for profile images, collections, achievements, authentication, etc.)
 
 // === RESPONSIVE PROFILE IMAGES ===
 function previewAvatar(event) {
@@ -1915,38 +2329,31 @@ function updateAvatarDisplay() {
 }
 
 // === WORKING COLLECTIONS SYSTEM ===
-function showCollectionsSection() {
-  if (!currentUser) {
-    alert('Please login to view collections!');
-    showAuthModal();
-    return;
-  }
-  
-  // Simple collections display
+function displayCollections() {
+  const collectionsGrid = document.getElementById('collectionsGrid');
+  if (!collectionsGrid) return;
+
   const userCollections = collections[currentUser.id] || {};
-  let collectionsHTML = '<h2>My Collections</h2>';
   
   if (Object.keys(userCollections).length === 0) {
-    collectionsHTML += '<p>No collections yet. <button onclick="showCreateCollectionModal()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer;">Create First Collection</button></p>';
-  } else {
-    collectionsHTML += '<div style="display: grid; gap: 15px; margin-top: 20px;">';
-    
-    Object.values(userCollections).forEach(collection => {
-      collectionsHTML += `
-        <div style="background: var(--surface); padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h3>${collection.name}</h3>
-          <p>Games: ${collection.games.length}</p>
-          <button onclick="viewCollection('${collection.id}')" style="background: var(--secondary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 10px;">View</button>
-          <button onclick="deleteCollection('${collection.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Delete</button>
-        </div>
-      `;
-    });
-    
-    collectionsHTML += '</div>';
-    collectionsHTML += '<button onclick="showCreateCollectionModal()" style="background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px;">+ New Collection</button>';
+    collectionsGrid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+        <p>No collections yet. Create your first collection to organize your favorite games!</p>
+      </div>
+    `;
+    return;
   }
-  
-  document.getElementById('collectionsGrid').innerHTML = collectionsHTML;
+
+  collectionsGrid.innerHTML = Object.values(userCollections).map(collection => {
+    return `
+      <div style="background: var(--surface); padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h3>${collection.name}</h3>
+        <p>Games: ${collection.games.length}</p>
+        <button onclick="viewCollection('${collection.id}')" style="background: var(--secondary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 10px;">View</button>
+        <button onclick="deleteCollection('${collection.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Delete</button>
+      </div>
+    `;
+  }).join('');
 }
 
 function showCreateCollectionModal() {
@@ -1979,7 +2386,7 @@ function createCollection() {
   
   localStorage.setItem('collections', JSON.stringify(collections));
   closeModal('createCollectionModal');
-  showCollectionsSection();
+  displayCollections();
   unlockAchievement('collector', 'Game Collector!', 'You created your first collection!');
 }
 
@@ -2014,7 +2421,7 @@ function viewCollection(collectionId) {
   }
   
   gamesHTML += `<button onclick="showAddToCollectionModal('${collectionId}')" style="background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px;">+ Add Games</button>`;
-  gamesHTML += `<button onclick="showCollectionsSection()" style="background: var(--gray); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px; margin-left: 10px;">← Back</button>`;
+  gamesHTML += `<button onclick="displayCollections()" style="background: var(--gray); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px; margin-left: 10px;">← Back</button>`;
   
   document.getElementById('collectionsGrid').innerHTML = gamesHTML;
 }
@@ -2104,7 +2511,7 @@ function deleteCollection(collectionId) {
   if (confirm('Are you sure you want to delete this collection?')) {
     delete collections[currentUser.id][collectionId];
     localStorage.setItem('collections', JSON.stringify(collections));
-    showCollectionsSection();
+    displayCollections();
   }
 }
 
@@ -2126,7 +2533,10 @@ function showAchievementsSection() {
     { id: 'lucky', title: 'Feeling Lucky!', description: 'Discover a random game!', icon: '🎯' },
     { id: 'collector', title: 'Game Collector!', description: 'You created your first collection!', icon: '📚' },
     { id: 'organizer', title: 'Game Organizer!', description: 'You added a game to a collection!', icon: '🗂️' },
-    { id: 'socializer', title: 'Community Socializer!', description: 'You created your first post!', icon: '💬' }
+    { id: 'socializer', title: 'Community Socializer!', description: 'You created your first post!', icon: '💬' },
+    { id: 'first_post', title: 'First Post!', description: 'You created your first post!', icon: '📝' },
+    { id: 'bookmarker', title: 'Post Bookmarker!', description: 'You saved your first post!', icon: '⭐' },
+    { id: 'reaction_master', title: 'Reaction Master!', description: 'You reacted to 10 posts!', icon: '🔥' }
   ];
   
   achievementsHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">';
