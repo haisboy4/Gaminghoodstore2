@@ -186,6 +186,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
   }
 
   .user-info {
@@ -292,6 +293,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
   }
 
   /* === ENHANCED LAUNCH SCREEN === */
@@ -760,13 +762,13 @@
     font-size: 24px;
     border: 3px solid var(--primary);
     overflow: hidden;
-    cursor: pointer;
   }
 
   .avatar-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
   }
 
   .upload-btn {
@@ -782,6 +784,262 @@
 
   .upload-btn:hover {
     background: var(--secondary);
+  }
+
+  /* === SOCIAL FEED STYLES === */
+  .social-feed {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+
+  .create-post {
+    background: var(--surface);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .post-input {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 15px;
+    background: var(--surface);
+    color: var(--text);
+    resize: vertical;
+    margin-bottom: 15px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  .post-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .post-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .game-select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .post-btn {
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .post-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,107,53,0.4);
+  }
+
+  .post-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .post-card {
+    background: var(--surface);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    animation: fadeIn 0.5s ease;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .post-user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .post-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .post-user-info {
+    flex: 1;
+  }
+
+  .post-user-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--text);
+  }
+
+  .post-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .post-content {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    font-size: 14px;
+    white-space: pre-line;
+  }
+
+  .post-game {
+    background: rgba(255,107,53,0.1);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary);
+  }
+
+  .post-game-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--primary);
+    margin-bottom: 5px;
+  }
+
+  .post-game-platform {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .post-actions {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 15px;
+  }
+
+  .post-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .post-action:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--primary);
+  }
+
+  .post-action.active {
+    color: var(--secondary);
+  }
+
+  .post-action.liked {
+    color: #ff4757;
+  }
+
+  .comments-section {
+    margin-top: 15px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 15px;
+  }
+
+  .comment-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .comment-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .comments-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .comment {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .comment:last-child {
+    border-bottom: none;
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .comment-user {
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  .comment-time {
+    font-size: 10px;
+    color: var(--text-secondary);
+  }
+
+  .comment-content {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+  }
+
+  .no-posts-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
   }
 
   /* === RESPONSIVE DESIGN === */
@@ -810,6 +1068,23 @@
     .flip-card-front img {
       height: 120px;
     }
+
+    .social-feed {
+      padding: 0 5px;
+    }
+
+    .post-actions-bar {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .game-select {
+      width: 100%;
+    }
+
+    .post-btn {
+      width: 100%;
+    }
   }
 
   @media (max-width: 480px) {
@@ -823,6 +1098,33 @@
 
     .flip-card-front img {
       height: 100px;
+    }
+
+    .filter-buttons {
+      gap: 5px;
+    }
+
+    .filter-btn, #shuffleBtn, #luckyBtn {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .post-header {
+      gap: 8px;
+    }
+
+    .post-user-avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .post-actions {
+      gap: 10px;
+    }
+
+    .post-action {
+      padding: 5px 8px;
+      font-size: 12px;
     }
   }
 </style>
@@ -884,6 +1186,11 @@
       <span class="nav-text">Collections</span>
     </div>
     
+    <div class="nav-item" onclick="showSection('social')">
+      <span class="nav-icon">👥</span>
+      <span class="nav-text">Social Feed</span>
+    </div>
+    
     <div class="nav-item" onclick="showSection('top-rated')">
       <span class="nav-icon">⭐</span>
       <span class="nav-text">Top Rated</span>
@@ -901,7 +1208,7 @@
   </nav>
   
   <div class="sidebar-footer">
-    <p>Gaming Hood v2.0</p>
+    <p>Gaming Hood v3.0</p>
     <p>Built with ❤️ for gamers</p>
   </div>
 </aside>
@@ -933,16 +1240,72 @@
 
 <!-- === MAIN CONTENT === -->
 <div class="container">
-  <div class="filter-buttons">
-    <button class="filter-btn active" onclick="filterGames('all')">All Games</button>
-    <button class="filter-btn" onclick="filterGames('favorites')">❤️ Favorites</button>
-    <button class="filter-btn" onclick="filterGames('top-rated')">⭐ Top Rated</button>
-    <button id="shuffleBtn" onclick="shuffleGames()">🎲 Shuffle</button>
-    <button id="luckyBtn" onclick="feelingLucky()">🎯 Feeling Lucky</button>
+  <!-- Games Section -->
+  <div id="gamesSection">
+    <div class="filter-buttons">
+      <button class="filter-btn active" onclick="filterGames('all')">All Games</button>
+      <button class="filter-btn" onclick="filterGames('favorites')">❤️ Favorites</button>
+      <button class="filter-btn" onclick="filterGames('top-rated')">⭐ Top Rated</button>
+      <button id="shuffleBtn" onclick="shuffleGames()">🎲 Shuffle</button>
+      <button id="luckyBtn" onclick="feelingLucky()">🎯 Feeling Lucky</button>
+    </div>
+    
+    <div id="grid" class="grid">
+      <!-- Games will be loaded here -->
+    </div>
   </div>
-  
-  <div id="grid" class="grid">
-    <!-- Games will be loaded here -->
+
+  <!-- Social Feed Section -->
+  <div id="socialSection" style="display: none;">
+    <div class="social-feed">
+      <div class="create-post">
+        <textarea class="post-input" id="postContent" placeholder="Share your gaming experience, tips, or ask for help..."></textarea>
+        <div class="post-actions-bar">
+          <select class="game-select" id="postGameSelect">
+            <option value="">Select a game to tag (optional)...</option>
+          </select>
+          <button class="post-btn" onclick="createPost()" id="postBtn">Post to Feed</button>
+        </div>
+      </div>
+      <div id="postsContainer">
+        <!-- Posts will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Collections Section -->
+  <div id="collectionsSection" style="display: none;">
+    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+      <h2>My Collections</h2>
+      <button onclick="showCreateCollectionModal()" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer;">+ New Collection</button>
+    </div>
+    <div id="collectionsGrid" class="collections-grid">
+      <!-- Collections will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Favorites Section -->
+  <div id="favoritesSection" style="display: none;">
+    <h2 style="margin-bottom: 20px;">My Favorite Games</h2>
+    <div id="favoritesGrid" class="grid">
+      <!-- Favorite games will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Top Rated Section -->
+  <div id="topRatedSection" style="display: none;">
+    <h2 style="margin-bottom: 20px;">Top Rated Games</h2>
+    <div id="topRatedGrid" class="grid">
+      <!-- Top rated games will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Achievements Section -->
+  <div id="achievementsSection" style="display: none;">
+    <h2 style="margin-bottom: 20px;">My Achievements</h2>
+    <div id="achievementsGrid" class="grid">
+      <!-- Achievements will be loaded here -->
+    </div>
   </div>
 </div>
 
@@ -980,14 +1343,27 @@
   </div>
 </div>
 
+<!-- === CREATE COLLECTION MODAL === -->
+<div id="createCollectionModal" class="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>Create New Collection</h3>
+      <button onclick="closeModal('createCollectionModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+    </div>
+    <input type="text" id="collectionName" placeholder="Collection Name" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+    <button onclick="createCollection()" style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">Create Collection</button>
+  </div>
+</div>
+
 <!-- === SOUND ELEMENTS === -->
 <audio id="flipSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg"></audio>
 <audio id="favoriteSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg"></audio>
 <audio id="achievementSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg"></audio>
+<audio id="postSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg"></audio>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-// === GAMING HOOD - AUTO LOADING + PROFILE PHOTOS FIXED ===
+// === GAMING HOOD - WITH SOCIAL FEED ===
 
 // Initialize particles
 particlesJS('particles-js', {
@@ -1016,16 +1392,19 @@ particlesJS('particles-js', {
   }
 });
 
-// === FIXED DATA STORAGE ===
+// === DATA STORAGE ===
 const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
 let allGames = [];
 let favorites = JSON.parse(localStorage.getItem('gameFavorites')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let gameRatings = JSON.parse(localStorage.getItem('gameRatings')) || {};
 let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || {};
+let collections = JSON.parse(localStorage.getItem('collections')) || {};
+let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
+let socialPosts = JSON.parse(localStorage.getItem('socialPosts')) || [];
 let avatarFile = null;
 
-// === FIXED AUTO-LOADING SYSTEM ===
+// === AUTO-LOADING SYSTEM ===
 let isLoading = true;
 
 async function initializeApp() {
@@ -1037,6 +1416,9 @@ async function initializeApp() {
   } finally {
     // AUTO DISPLAY GAMES IMMEDIATELY AFTER LOADING
     displayGames(allGames);
+    
+    // Initialize game select for posts
+    updateGameSelect();
     
     setTimeout(() => {
       isLoading = false;
@@ -1052,7 +1434,7 @@ async function initializeApp() {
   updateUserInterface();
 }
 
-// === FIXED CSV LOADING ===
+// === CSV LOADING ===
 async function loadGamesFromCSV() {
   try {
     const response = await fetch(sheetUrl);
@@ -1115,7 +1497,7 @@ function loadFallbackGames() {
   ];
 }
 
-// === FIXED GAME DISPLAY WITH AUTO-LOADING ===
+// === GAME DISPLAY ===
 function displayGames(games) {
   const grid = document.getElementById('grid');
   if (!grid) {
@@ -1181,6 +1563,10 @@ function displayGames(games) {
             </a>
             
             ${currentUser ? `
+              <div class="btn" onclick="event.stopPropagation(); showAddToCollection('${game.id}')">
+                📚 Add to Collection
+              </div>
+              
               <div class="rating-container">
                 <small>Rate this game:</small>
                 <div class="star-rating">
@@ -1198,7 +1584,296 @@ function displayGames(games) {
   }).join('');
 }
 
-// === PROFILE PHOTO FUNCTIONALITY ===
+// === SOCIAL FEED SYSTEM ===
+function updateGameSelect() {
+  const gameSelect = document.getElementById('postGameSelect');
+  gameSelect.innerHTML = '<option value="">Select a game to tag (optional)...</option>' +
+    allGames.map(game => `<option value="${game.id}">${game.name}</option>`).join('');
+}
+
+function createPost() {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const content = document.getElementById('postContent').value.trim();
+  const gameId = document.getElementById('postGameSelect').value;
+  
+  if (!content) {
+    alert('Please write something in your post!');
+    return;
+  }
+  
+  const post = {
+    id: 'post_' + Date.now(),
+    userId: currentUser.id,
+    userName: currentUser.name,
+    userAvatar: currentUser.avatarUrl || null,
+    userAvatarColor: getAvatarUrl(currentUser),
+    content: content,
+    gameId: gameId,
+    timestamp: new Date().toISOString(),
+    likes: [],
+    comments: []
+  };
+  
+  socialPosts.unshift(post);
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  
+  // Clear form
+  document.getElementById('postContent').value = '';
+  document.getElementById('postGameSelect').value = '';
+  
+  // Refresh feed
+  displaySocialFeed();
+  playSound('postSound');
+  unlockAchievement('socializer', 'Community Socializer!', 'You created your first post!');
+}
+
+function displaySocialFeed() {
+  const postsContainer = document.getElementById('postsContainer');
+  
+  if (socialPosts.length === 0) {
+    postsContainer.innerHTML = `
+      <div class="no-posts">
+        <div class="no-posts-icon">💬</div>
+        <h3>No posts yet</h3>
+        <p>Be the first to share your gaming experience with the community!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  postsContainer.innerHTML = socialPosts.map(post => {
+    const game = post.gameId ? allGames.find(g => g.id === post.gameId) : null;
+    const timeAgo = getTimeAgo(post.timestamp);
+    const isLiked = post.likes.includes(currentUser?.id);
+    const likeCount = post.likes.length;
+    const commentCount = post.comments.length;
+    
+    return `
+      <div class="post-card" data-post-id="${post.id}">
+        <div class="post-header">
+          <div class="post-user-avatar" style="background: ${post.userAvatarColor};">
+            ${post.userAvatar ? `<img src="${post.userAvatar}" alt="${post.userName}" class="responsive-avatar">` : post.userName[0].toUpperCase()}
+          </div>
+          <div class="post-user-info">
+            <div class="post-user-name">${post.userName}</div>
+            <div class="post-time">${timeAgo}</div>
+          </div>
+        </div>
+        
+        <div class="post-content">${post.content}</div>
+        
+        ${game ? `
+          <div class="post-game">
+            <div class="post-game-title">🎮 ${game.name}</div>
+            <div class="post-game-platform">${game.Platform}</div>
+          </div>
+        ` : ''}
+        
+        <div class="post-actions">
+          <button class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+            ${isLiked ? '❤️' : '🤍'} ${likeCount || ''}
+          </button>
+          <button class="post-action" onclick="toggleComments('${post.id}')">
+            💬 ${commentCount || ''}
+          </button>
+          <button class="post-action" onclick="sharePost('${post.id}')">
+            🔗 Share
+          </button>
+        </div>
+        
+        <div class="comments-section" id="comments-${post.id}" style="display: none;">
+          <div class="comments-list" id="comments-list-${post.id}">
+            ${post.comments.map(comment => `
+              <div class="comment">
+                <div class="comment-header">
+                  <span class="comment-user">${comment.userName}</span>
+                  <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
+                </div>
+                <div class="comment-content">${comment.content}</div>
+              </div>
+            `).join('')}
+          </div>
+          ${currentUser ? `
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment('${post.id}')">
+              <button onclick="addComment('${post.id}')" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer;">Post</button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleLike(postId) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  const userIndex = post.likes.indexOf(currentUser.id);
+  if (userIndex > -1) {
+    post.likes.splice(userIndex, 1);
+  } else {
+    post.likes.push(currentUser.id);
+    playSound('favoriteSound');
+  }
+  
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  displaySocialFeed();
+}
+
+function toggleComments(postId) {
+  const commentsSection = document.getElementById(`comments-${postId}`);
+  if (commentsSection.style.display === 'none') {
+    commentsSection.style.display = 'block';
+  } else {
+    commentsSection.style.display = 'none';
+  }
+}
+
+function addComment(postId) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const commentInput = document.getElementById(`comment-input-${postId}`);
+  const content = commentInput.value.trim();
+  
+  if (!content) return;
+  
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  const comment = {
+    id: 'comment_' + Date.now(),
+    userId: currentUser.id,
+    userName: currentUser.name,
+    content: content,
+    timestamp: new Date().toISOString()
+  };
+  
+  post.comments.push(comment);
+  localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+  
+  // Clear input and refresh
+  commentInput.value = '';
+  displaySocialFeed();
+  
+  // Keep comments section open
+  document.getElementById(`comments-${postId}`).style.display = 'block';
+}
+
+function sharePost(postId) {
+  const post = socialPosts.find(p => p.id === postId);
+  if (!post) return;
+  
+  const game = post.gameId ? allGames.find(g => g.id === post.gameId) : null;
+  const shareText = `Check out this post from ${post.userName} in Gaming Hood!`;
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'Gaming Hood Post',
+      text: shareText,
+      url: window.location.href
+    });
+  } else {
+    // Fallback: copy to clipboard
+    const tempInput = document.createElement('input');
+    tempInput.value = `${shareText}\n\n"${post.content}"\n\n${window.location.href}`;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    
+    alert('Post content copied to clipboard!');
+  }
+}
+
+function getTimeAgo(timestamp) {
+  const now = new Date();
+  const postTime = new Date(timestamp);
+  const diff = now - postTime;
+  
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (seconds < 60) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  
+  return postTime.toLocaleDateString();
+}
+
+// === SECTION MANAGEMENT ===
+function showSection(section) {
+  // Hide all sections
+  document.querySelectorAll('[id$="Section"]').forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Update navigation
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+  
+  if (window.innerWidth <= 768) {
+    closeSidebar();
+  }
+  
+  // Show selected section
+  switch(section) {
+    case 'games':
+      document.getElementById('gamesSection').style.display = 'block';
+      displayGames(allGames);
+      break;
+    case 'favorites':
+      document.getElementById('favoritesSection').style.display = 'block';
+      const favoriteGames = allGames.filter(game => favorites.includes(game.id));
+      document.getElementById('favoritesGrid').innerHTML = favoriteGames.length > 0 ? 
+        displayGames(favoriteGames) : '<p>No favorite games yet!</p>';
+      break;
+    case 'collections':
+      document.getElementById('collectionsSection').style.display = 'block';
+      if (currentUser) {
+        displayCollections();
+      } else {
+        document.getElementById('collectionsGrid').innerHTML = '<p>Please login to view collections!</p>';
+      }
+      break;
+    case 'social':
+      document.getElementById('socialSection').style.display = 'block';
+      displaySocialFeed();
+      break;
+    case 'top-rated':
+      document.getElementById('topRatedSection').style.display = 'block';
+      const topRatedGames = allGames.filter(game => game.rating >= 4)
+                           .sort((a, b) => b.rating - a.rating);
+      document.getElementById('topRatedGrid').innerHTML = topRatedGames.length > 0 ? 
+        displayGames(topRatedGames) : '<p>No top-rated games yet!</p>';
+      break;
+    case 'achievements':
+      document.getElementById('achievementsSection').style.display = 'block';
+      showAchievementsSection();
+      break;
+  }
+}
+
+// ... (rest of the existing code for profile images, collections, achievements, authentication, etc.)
+
+// === RESPONSIVE PROFILE IMAGES ===
 function previewAvatar(event) {
   const file = event.target.files[0];
   if (file) {
@@ -1206,7 +1881,7 @@ function previewAvatar(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
       const avatarPreview = document.getElementById('avatarPreview');
-      avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview">`;
+      avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
     };
     reader.readAsDataURL(file);
   }
@@ -1228,8 +1903,8 @@ function updateAvatarDisplay() {
   
   if (currentUser) {
     if (currentUser.avatarUrl) {
-      userAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}">`;
-      sidebarUserAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}">`;
+      userAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+      sidebarUserAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
     } else {
       userAvatar.innerHTML = currentUser.avatar;
       sidebarUserAvatar.innerHTML = currentUser.avatar;
@@ -1237,6 +1912,242 @@ function updateAvatarDisplay() {
       sidebarUserAvatar.style.background = getAvatarUrl(currentUser);
     }
   }
+}
+
+// === WORKING COLLECTIONS SYSTEM ===
+function showCollectionsSection() {
+  if (!currentUser) {
+    alert('Please login to view collections!');
+    showAuthModal();
+    return;
+  }
+  
+  // Simple collections display
+  const userCollections = collections[currentUser.id] || {};
+  let collectionsHTML = '<h2>My Collections</h2>';
+  
+  if (Object.keys(userCollections).length === 0) {
+    collectionsHTML += '<p>No collections yet. <button onclick="showCreateCollectionModal()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer;">Create First Collection</button></p>';
+  } else {
+    collectionsHTML += '<div style="display: grid; gap: 15px; margin-top: 20px;">';
+    
+    Object.values(userCollections).forEach(collection => {
+      collectionsHTML += `
+        <div style="background: var(--surface); padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h3>${collection.name}</h3>
+          <p>Games: ${collection.games.length}</p>
+          <button onclick="viewCollection('${collection.id}')" style="background: var(--secondary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 10px;">View</button>
+          <button onclick="deleteCollection('${collection.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Delete</button>
+        </div>
+      `;
+    });
+    
+    collectionsHTML += '</div>';
+    collectionsHTML += '<button onclick="showCreateCollectionModal()" style="background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px;">+ New Collection</button>';
+  }
+  
+  document.getElementById('collectionsGrid').innerHTML = collectionsHTML;
+}
+
+function showCreateCollectionModal() {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  document.getElementById('collectionName').value = '';
+  document.getElementById('createCollectionModal').style.display = 'block';
+}
+
+function createCollection() {
+  const name = document.getElementById('collectionName').value;
+  if (!name) {
+    alert('Please enter a collection name!');
+    return;
+  }
+
+  const collectionId = 'collection_' + Date.now();
+  if (!collections[currentUser.id]) {
+    collections[currentUser.id] = {};
+  }
+  
+  collections[currentUser.id][collectionId] = {
+    id: collectionId,
+    name: name,
+    games: [],
+    createdAt: new Date().toISOString()
+  };
+  
+  localStorage.setItem('collections', JSON.stringify(collections));
+  closeModal('createCollectionModal');
+  showCollectionsSection();
+  unlockAchievement('collector', 'Game Collector!', 'You created your first collection!');
+}
+
+function viewCollection(collectionId) {
+  const collection = collections[currentUser.id][collectionId];
+  let gamesHTML = `<h2>${collection.name}</h2>`;
+  
+  if (collection.games.length === 0) {
+    gamesHTML += '<p>No games in this collection yet.</p>';
+  } else {
+    const collectionGames = allGames.filter(game => collection.games.includes(game.id));
+    gamesHTML += '<div class="grid">';
+    gamesHTML += collectionGames.map(game => `
+      <div class="flip-card" onclick="flipCard(this)">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="${game.image}" alt="${game.name}" style="width: 100%; height: 140px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/160x140/666/white?text=🎮'">
+            <div class="info">
+              <h3>${game.name}</h3>
+              <p>${game.Platform}</p>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <h3>${game.name}</h3>
+            <a class="btn btn-primary" href="${game.link}" target="_blank">🎮 Download</a>
+            <button class="btn" onclick="removeFromCollection('${collectionId}', '${game.id}')">❌ Remove</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    gamesHTML += '</div>';
+  }
+  
+  gamesHTML += `<button onclick="showAddToCollectionModal('${collectionId}')" style="background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px;">+ Add Games</button>`;
+  gamesHTML += `<button onclick="showCollectionsSection()" style="background: var(--gray); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; margin-top: 15px; margin-left: 10px;">← Back</button>`;
+  
+  document.getElementById('collectionsGrid').innerHTML = gamesHTML;
+}
+
+function showAddToCollectionModal(collectionId) {
+  let modalHTML = `
+    <div class="modal" id="addToCollectionModal" style="display: block;">
+      <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Add Games to Collection</h3>
+          <button onclick="closeModal('addToCollectionModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+        </div>
+        <div style="max-height: 400px; overflow-y: auto;">
+  `;
+  
+  allGames.forEach(game => {
+    const inCollection = collections[currentUser.id][collectionId].games.includes(game.id);
+    if (!inCollection) {
+      modalHTML += `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+          <span>${game.name}</span>
+          <button onclick="addToCollection('${collectionId}', '${game.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Add</button>
+        </div>
+      `;
+    }
+  });
+  
+  modalHTML += `
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function addToCollection(collectionId, gameId) {
+  collections[currentUser.id][collectionId].games.push(gameId);
+  localStorage.setItem('collections', JSON.stringify(collections));
+  closeModal('addToCollectionModal');
+  viewCollection(collectionId);
+  unlockAchievement('organizer', 'Game Organizer!', 'You added a game to a collection!');
+}
+
+function showAddToCollection(gameId) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const userCollections = collections[currentUser.id] || {};
+  if (Object.keys(userCollections).length === 0) {
+    showCreateCollectionModal();
+    return;
+  }
+  
+  let collectionList = 'Select a collection:\n\n';
+  Object.values(userCollections).forEach((collection, index) => {
+    collectionList += `${index + 1}. ${collection.name}\n`;
+  });
+  
+  const choice = prompt(collectionList + '\nEnter collection number:');
+  const collectionIndex = parseInt(choice) - 1;
+  const collectionKeys = Object.keys(userCollections);
+  
+  if (collectionIndex >= 0 && collectionIndex < collectionKeys.length) {
+    const collectionId = collectionKeys[collectionIndex];
+    if (!collections[currentUser.id][collectionId].games.includes(gameId)) {
+      collections[currentUser.id][collectionId].games.push(gameId);
+      localStorage.setItem('collections', JSON.stringify(collections));
+      alert('Game added to collection!');
+      unlockAchievement('organizer', 'Game Organizer!', 'You added a game to a collection!');
+    } else {
+      alert('Game already in this collection!');
+    }
+  }
+}
+
+function removeFromCollection(collectionId, gameId) {
+  const collection = collections[currentUser.id][collectionId];
+  collection.games = collection.games.filter(id => id !== gameId);
+  localStorage.setItem('collections', JSON.stringify(collections));
+  viewCollection(collectionId);
+}
+
+function deleteCollection(collectionId) {
+  if (confirm('Are you sure you want to delete this collection?')) {
+    delete collections[currentUser.id][collectionId];
+    localStorage.setItem('collections', JSON.stringify(collections));
+    showCollectionsSection();
+  }
+}
+
+// === WORKING ACHIEVEMENTS SYSTEM ===
+function showAchievementsSection() {
+  if (!currentUser) {
+    alert('Please login to view achievements!');
+    showAuthModal();
+    return;
+  }
+  
+  let achievementsHTML = '<h2>My Achievements</h2>';
+  
+  const userAchievements = achievements || {};
+  const allAchievements = [
+    { id: 'welcome', title: 'Welcome to the Hood!', description: 'You joined Gaming Hood!', icon: '👋' },
+    { id: 'welcome_back', title: 'Welcome Back!', description: 'You logged in successfully!', icon: '🔁' },
+    { id: 'first_rating', title: 'Game Critic!', description: 'You rated your first game!', icon: '⭐' },
+    { id: 'lucky', title: 'Feeling Lucky!', description: 'Discover a random game!', icon: '🎯' },
+    { id: 'collector', title: 'Game Collector!', description: 'You created your first collection!', icon: '📚' },
+    { id: 'organizer', title: 'Game Organizer!', description: 'You added a game to a collection!', icon: '🗂️' },
+    { id: 'socializer', title: 'Community Socializer!', description: 'You created your first post!', icon: '💬' }
+  ];
+  
+  achievementsHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">';
+  
+  allAchievements.forEach(achievement => {
+    const unlocked = userAchievements[achievement.id];
+    achievementsHTML += `
+      <div style="background: var(--surface); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); opacity: ${unlocked ? '1' : '0.5'};">
+        <div style="font-size: 40px; margin-bottom: 10px;">${achievement.icon}</div>
+        <h3 style="margin-bottom: 10px;">${achievement.title}</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">${achievement.description}</p>
+        <div style="margin-top: 10px; color: ${unlocked ? 'var(--accent)' : 'var(--gray)'}; font-weight: bold;">
+          ${unlocked ? '✅ UNLOCKED' : '🔒 LOCKED'}
+        </div>
+      </div>
+    `;
+  });
+  
+  achievementsHTML += '</div>';
+  
+  document.getElementById('achievementsGrid').innerHTML = achievementsHTML;
 }
 
 // === FIXED AUTHENTICATION SYSTEM ===
@@ -1407,32 +2318,6 @@ function closeSidebar() {
 
 document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
 
-// === SECTION MANAGEMENT ===
-function showSection(section) {
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  event.currentTarget.classList.add('active');
-  
-  if (window.innerWidth <= 768) {
-    closeSidebar();
-  }
-  
-  let filteredGames = allGames;
-  
-  switch(section) {
-    case 'favorites':
-      filteredGames = allGames.filter(game => favorites.includes(game.id));
-      break;
-    case 'top-rated':
-      filteredGames = allGames.filter(game => game.rating >= 4)
-                   .sort((a, b) => b.rating - a.rating);
-      break;
-  }
-  
-  displayGames(filteredGames);
-}
-
 // === THEME TOGGLE ===
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -1566,8 +2451,6 @@ function rateGame(gameId, rating) {
 }
 
 // === ACHIEVEMENT SYSTEM ===
-let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
-
 function unlockAchievement(achievementId, title, description) {
   if (!achievements[achievementId]) {
     achievements[achievementId] = true;
