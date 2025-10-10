@@ -3,66 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Game Store</title>
+<title>Gaming Hood - Your Gaming Community</title>
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B35">
+<meta name="description" content="Gaming Hood - Discover, share, and connect with gamers worldwide">
 <style>
+  /* === CSS VARIABLES === */
+  :root {
+    --primary: #FF6B35;
+    --secondary: #00A8E8;
+    --accent: #00E676;
+    --dark: #1A1A2E;
+    --darker: #0F0F1B;
+    --light: #ffffff;
+    --gray: #8A8A9D;
+    --background: #f4f4f4;
+    --surface: #ffffff;
+    --text: #333333;
+    --text-secondary: #666666;
+    --sidebar-width: 280px;
+  }
+
+  body.dark {
+    --background: var(--dark);
+    --surface: #2A2A3E;
+    --text: var(--light);
+    --text-secondary: var(--gray);
+  }
+
+  /* === BASE STYLES === */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
     font-family: 'Poppins', sans-serif;
-    background: #f4f4f4;
-    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    transition: all 0.3s ease;
+    overflow-x: hidden;
     padding: 10px;
-    transition: background 0.3s, color 0.3s;
   }
-  body.dark { background: #1b1b1b; color: #fff; }
 
-  /* 🔍 Glassy search bar */
+  /* === SIDEBAR NAVIGATION === */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -var(--sidebar-width);
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(135deg, var(--dark), var(--darker));
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 5px 0 30px rgba(0,0,0,0.3);
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    display: none;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  .sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+  }
+
+  .sidebar-logo {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-tagline {
+    color: var(--gray);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    color: var(--light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+  }
+
+  .nav-item.active {
+    background: var(--primary);
+  }
+
+  .nav-icon {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .nav-text {
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255,255,255,0.1);
+    text-align: center;
+    color: var(--gray);
+    font-size: 12px;
+  }
+
+  /* === HEADER === */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 10px;
+    background: var(--surface);
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .menu-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 8px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255,107,53,0.1);
+    transform: scale(1.1);
+  }
+
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex: 1;
+  }
+
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .auth-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .user-profile {
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid var(--primary);
+  }
+
+  /* === ENHANCED LAUNCH SCREEN === */
+  #launchScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--dark), var(--darker));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+
+  .launch-content {
+    text-align: center;
+    animation: fadeInUp 1s ease;
+  }
+
+  .hood-loader {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin: 0 auto 30px;
+  }
+
+  .hood-loader::before,
+  .hood-loader::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    animation: hoodPulse 2s linear infinite;
+  }
+
+  .hood-loader::before {
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+  }
+
+  .hood-loader::after {
+    width: 70%;
+    height: 70%;
+    background: var(--dark);
+    top: 15%;
+    left: 15%;
+    animation: hoodSpin 2s linear infinite;
+  }
+
+  @keyframes hoodPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+  }
+
+  @keyframes hoodSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .launch-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { filter: drop-shadow(0 0 10px var(--primary)); }
+    to { filter: drop-shadow(0 0 20px var(--secondary)); }
+  }
+
+  .launch-subtitle {
+    color: var(--gray);
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    animation: fadeIn 1s ease 0.5s both;
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: bounce 1.4s ease-in-out infinite both;
+  }
+
+  .dot:nth-child(1) { animation-delay: -0.32s; }
+  .dot:nth-child(2) { animation-delay: -0.16s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* === PARTICLE BACKGROUND === */
+  #particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* === SEARCH BAR === */
   .search-bar {
-    position: sticky; top: 0; z-index: 10;
+    position: sticky; 
+    top: 0; 
+    z-index: 10;
     background: rgba(255,255,255,0.7);
     backdrop-filter: blur(10px);
     border-radius: 50px;
-    display: flex; justify-content: center; align-items: center;
-    gap: 6px; padding: 6px 10px; margin-bottom: 8px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    gap: 6px; 
+    padding: 6px 10px; 
+    margin-bottom: 8px;
   }
-  body.dark .search-bar { background: rgba(40,40,40,0.8); }
+  body.dark .search-bar { 
+    background: rgba(42,42,62,0.8); 
+  }
 
   .search-bar input {
-    flex: 1; padding: 10px; font-size: 16px;
-    border: none; border-radius: 25px; outline: none;
-    background: transparent; color: inherit;
+    flex: 1; 
+    padding: 10px; 
+    font-size: 16px;
+    border: none; 
+    border-radius: 25px; 
+    outline: none;
+    background: transparent; 
+    color: inherit;
   }
+
   .search-bar button {
-    background: #2196F3; border: none; color: white;
-    padding: 10px 14px; border-radius: 50%;
-    cursor: pointer; font-size: 18px;
+    background: var(--primary); 
+    border: none; 
+    color: white;
+    padding: 10px 14px; 
+    border-radius: 50%;
+    cursor: pointer; 
+    font-size: 18px;
     transition: transform 0.2s;
   }
-  .search-bar button:hover { transform: scale(1.1); }
 
-  /* 🌙 Theme Toggle */
-  #themeToggle { background: #ffcc00; color: #333; }
-  body.dark #themeToggle { background: #333; color: #ffcc00; }
-
-  /* 🎲 Shuffle Button */
-  #shuffleBtn {
-    display: block; margin: 10px auto;
-    background: linear-gradient(45deg, #2196F3, #21CBF3);
-    color: white; border: none;
-    padding: 10px 25px; border-radius: 30px;
-    cursor: pointer; font-size: 15px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    animation: pulseGlow 2s infinite ease-in-out;
-  }
-  @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 10px #21CBF3; }
-    50% { box-shadow: 0 0 25px #2196F3; }
-  }
-  #shuffleBtn:active {
-    transform: rotate(-5deg) scale(0.95);
-    box-shadow: 0 0 25px #21CBF3 inset;
+  /* === FILTER BUTTONS === */
+  .filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
   }
 
-  /* 🕹️ Game Grid */
+  .filter-btn, #shuffleBtn, #luckyBtn {
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white; 
+    border: none;
+    padding: 10px 20px; 
+    border-radius: 30px;
+    cursor: pointer; 
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .filter-btn.active, #shuffleBtn:hover, #luckyBtn:hover {
+    background: linear-gradient(45deg, var(--secondary), var(--accent));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 168, 232, 0.4);
+  }
+
+  /* === GAME GRID & CARDS - FIXED SIZING === */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -70,194 +425,863 @@
     margin-top: 10px;
   }
 
-  /* 🎮 Game Card */
-  .card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    overflow: hidden;
-    display: flex; flex-direction: column;
+  .flip-card {
+    background: transparent;
+    perspective: 1000px;
+    height: 260px; /* Fixed height */
+    border-radius: 15px;
     animation: fadeIn 0.6s ease both;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(33,150,243,0.3);
+    position: relative;
+    cursor: pointer;
   }
 
-  body.dark .card { background: #2a2a2a; color: #fff; }
-  .card img { width: 100%; height: 140px; object-fit: cover; }
-  .card .info { padding: 10px; flex: 1; }
-  .card h3 { font-size: 16px; margin: 0 0 5px; }
-  .card p { font-size: 13px; color: gray; margin: 0 0 10px; }
-  body.dark .card p { color: #bbb; }
-  .btn {
-    display: block; background: #2196F3; color: white;
-    text-align: center; padding: 8px;
-    text-decoration: none; border-radius: 0 0 12px 12px;
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   }
 
-  /* ⬆️ Back to Top Button */
-  #backToTop {
-    position: fixed; bottom: 25px; right: 25px;
-    background: rgba(255,255,255,0.25); color: #2196F3;
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 50%; padding: 12px 15px;
-    font-size: 22px; cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    backdrop-filter: blur(8px); display: none;
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  .flip-card-front {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flip-card-back {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    text-align: center;
+  }
+
+  /* === FAVORITE BUTTON === */
+  .favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
     transition: all 0.3s ease;
-  }
-  #backToTop:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
-
-  /* 🌀 Launch Screen */
-  #launchScreen {
-    position: fixed; inset: 0;
-    background: rgba(255,255,255,0.8);
     backdrop-filter: blur(10px);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 9999;
-    animation: fadeOut 1s ease 2.5s forwards;
+    z-index: 2;
   }
-  body.dark #launchScreen { background: rgba(0,0,0,0.8); color: white; }
-  @keyframes fadeOut {
-    to { opacity: 0; visibility: hidden; }
-  }
-  .loader {
-    border: 4px solid #ddd; border-top: 4px solid #2196F3;
-    border-radius: 50%; width: 40px; height: 40px;
-    animation: spin 1s linear infinite; margin-bottom: 10px;
-  }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  #quote {
-    text-align: center; font-style: italic;
-    margin-top: 5px; color: #777;
+  body.dark .favorite-btn {
+    background: rgba(40, 40, 40, 0.9);
+  }
+
+  .favorite-btn.active {
+    color: var(--secondary);
+    animation: heartBeat 0.6s ease;
+  }
+
+  @keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.3); }
+    50% { transform: scale(0.9); }
+    75% { transform: scale(1.2); }
+  }
+
+  /* === GAME IMAGE - FIXED SIZING === */
+  .flip-card-front img { 
+    width: 100%; 
+    height: 140px; /* Fixed height */
+    object-fit: cover; 
+    transition: transform 0.3s ease;
+  }
+
+  .flip-card:hover .flip-card-front img {
+    transform: scale(1.05);
+  }
+
+  /* === GAME INFO - FIXED LAYOUT === */
+  .flip-card-front .info { 
+    padding: 10px; 
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .flip-card-front h3 { 
+    font-size: 14px; 
+    margin: 0 0 5px; 
+    line-height: 1.3;
+    font-weight: 600;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .flip-card-front p { 
+    font-size: 12px; 
+    color: var(--text-secondary); 
+    margin: 0 0 8px; 
+  }
+
+  /* === RATING SYSTEM === */
+  .rating-container {
+    margin: 8px 0;
+    text-align: center;
+  }
+
+  .star-rating {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+
+  .star {
+    color: #ddd;
+    font-size: 14px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  .star.active {
+    color: #FFD700;
+  }
+
+  .rating-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* === GAME STATS === */
+  .game-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-value {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    opacity: 0.8;
+  }
+
+  /* === BUTTONS === */
+  .btn {
+    display: block; 
+    background: rgba(255,255,255,0.2); 
+    color: white;
+    text-align: center; 
+    padding: 8px 12px;
+    text-decoration: none; 
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin: 5px 0;
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: #00C853;
+  }
+
+  /* === MODALS === */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  /* === RESPONSIVE DESIGN === */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 85vw;
+      left: -85vw;
+    }
+
+    .header {
+      padding: 12px 8px;
+    }
+
+    .launch-title {
+      font-size: 2em;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .flip-card {
+      height: 240px;
+    }
+
+    .flip-card-front img {
+      height: 120px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .flip-card {
+      height: 220px;
+    }
+
+    .flip-card-front img {
+      height: 100px;
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- 🌀 Launch Screen -->
+<!-- === ENHANCED LAUNCH SCREEN === -->
 <div id="launchScreen">
-  <div class="loader"></div>
-  <h3>Loading Games...</h3>
+  <div class="launch-content">
+    <div class="hood-loader"></div>
+    <h1 class="launch-title">Gaming Hood</h1>
+    <p class="launch-subtitle">Your Ultimate Gaming Community</p>
+    <div class="loading-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
 </div>
 
-<!-- 🔍 Search + Theme -->
+<!-- === SIDEBAR NAVIGATION === -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Gaming Hood</div>
+    <div class="sidebar-tagline">Your Gaming Community</div>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <div class="nav-item" onclick="showAuthModal()">
+      <span class="nav-icon">👤</span>
+      <span class="nav-text">Login / Sign Up</span>
+    </div>
+    
+    <div class="nav-item active" onclick="showSection('games')">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-text">All Games</span>
+    </div>
+    
+    <div class="nav-item" onclick="showSection('favorites')">
+      <span class="nav-icon">❤️</span>
+      <span class="nav-text">My Favorites</span>
+    </div>
+    
+    <div class="nav-item" onclick="showSection('collections')">
+      <span class="nav-icon">📚</span>
+      <span class="nav-text">Collections</span>
+    </div>
+    
+    <div class="nav-item" onclick="showSection('top-rated')">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-text">Top Rated</span>
+    </div>
+    
+    <div class="nav-item" onclick="showSection('achievements')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-text">Achievements</span>
+    </div>
+    
+    <div class="nav-item" onclick="toggleTheme()">
+      <span class="nav-icon" id="themeIcon">🌞</span>
+      <span class="nav-text" id="themeText">Light Mode</span>
+    </div>
+  </nav>
+  
+  <div class="sidebar-footer">
+    <p>Gaming Hood v2.0</p>
+    <p>Built with ❤️ for gamers</p>
+  </div>
+</aside>
+
+<!-- === PARTICLE BACKGROUND === -->
+<div id="particles-js"></div>
+
+<!-- === MAIN HEADER === -->
+<div class="header">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="logo">Gaming Hood</div>
+  <div class="user-menu">
+    <div class="auth-buttons" id="authButtons">
+      <button onclick="showAuthModal()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer;">Login</button>
+    </div>
+    <div class="user-profile" id="userProfile">
+      <div class="avatar" id="userAvatar">U</div>
+      <button onclick="logout()" style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 15px; cursor: pointer;">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- === SEARCH BAR === -->
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Search for games...">
+  <input type="text" id="searchInput" placeholder="Search games in the Hood...">
   <button id="searchBtn">🔍</button>
-  <button id="themeToggle">🌞</button>
 </div>
 
-<!-- 🎲 Shuffle -->
-<button id="shuffleBtn">🎲 Shuffle Games</button>
+<!-- === MAIN CONTENT === -->
+<div class="container">
+  <div class="filter-buttons">
+    <button class="filter-btn active" onclick="filterGames('all')">All Games</button>
+    <button class="filter-btn" onclick="filterGames('favorites')">❤️ Favorites</button>
+    <button class="filter-btn" onclick="filterGames('top-rated')">⭐ Top Rated</button>
+    <button id="shuffleBtn" onclick="shuffleGames()">🎲 Shuffle</button>
+    <button id="luckyBtn" onclick="feelingLucky()">🎯 Feeling Lucky</button>
+  </div>
+  
+  <div id="grid" class="grid">
+    <!-- Games will be loaded here -->
+  </div>
+</div>
 
-<!-- 💬 Quote -->
-<p id="quote"></p>
+<!-- === AUTH MODAL === -->
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>Join the Gaming Hood</h3>
+      <button onclick="closeModal('authModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+    </div>
+    <div id="authForms">
+      <div id="loginForm">
+        <input type="text" id="loginEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+        <input type="password" id="loginPassword" placeholder="Password" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+        <button onclick="login()" style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">Enter the Hood</button>
+        <p style="text-align: center; margin: 15px 0; color: var(--text-secondary);">New here? <a href="#" onclick="showRegister()" style="color: var(--primary);">Join the Community</a></p>
+      </div>
+      <div id="registerForm" style="display: none;">
+        <input type="text" id="registerName" placeholder="Gamer Tag" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+        <input type="email" id="registerEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+        <input type="password" id="registerPassword" placeholder="Password" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+        <button onclick="register()" style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--secondary), var(--accent)); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">Join Gaming Hood</button>
+        <p style="text-align: center; margin: 15px 0; color: var(--text-secondary);">Already part of the Hood? <a href="#" onclick="showLogin()" style="color: var(--primary);">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- 🕹️ Grid -->
-<div id="grid" class="grid"></div>
+<!-- === SOUND ELEMENTS === -->
+<audio id="flipSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg"></audio>
+<audio id="favoriteSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg"></audio>
+<audio id="achievementSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg"></audio>
 
-<!-- ⬆️ Back to Top -->
-<button id="backToTop" title="Back to top">⬆️</button>
-
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
+// === GAMING HOOD - BUG FIXES APPLIED ===
+
+// Initialize particles
+particlesJS('particles-js', {
+  particles: {
+    number: { value: 50, density: { enable: true, value_area: 800 } },
+    color: { value: "#FF6B35" },
+    shape: { type: "circle" },
+    opacity: { value: 0.5, random: true },
+    size: { value: 3, random: true },
+    line_linked: {
+      enable: true,
+      distance: 150,
+      color: "#FF6B35",
+      opacity: 0.2,
+      width: 1
+    },
+    move: {
+      enable: true,
+      speed: 2,
+      direction: "none",
+      random: true,
+      straight: false,
+      out_mode: "out",
+      bounce: false
+    }
+  }
+});
+
+// === FIXED GAME DATA LOADING ===
 const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
 let allGames = [];
+let favorites = JSON.parse(localStorage.getItem('gameFavorites')) || [];
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+let gameRatings = JSON.parse(localStorage.getItem('gameRatings')) || {};
 
-// 🎮 Random quotes
-const quotes = [
-  "“It's dangerous to go alone! Take this.” — Zelda",
-  "“Finish him!” — Mortal Kombat",
-  "“The cake is a lie.” — Portal",
-  "“Stay awhile and listen.” — Diablo",
-  "“War. War never changes.” — Fallout"
-];
-document.getElementById("quote").textContent =
-  quotes[Math.floor(Math.random() * quotes.length)];
+// === FIXED LOADING SYSTEM ===
+let isLoading = true;
 
-fetch(sheetUrl)
-  .then(res => res.text())
-  .then(csv => {
-    const rows = csv.trim().split("\n").slice(1);
+async function initializeApp() {
+  try {
+    await loadGamesFromCSV();
+  } catch (error) {
+    console.error('Failed to load games:', error);
+    loadFallbackGames();
+  } finally {
+    // Ensure loading screen stays for minimum time
+    setTimeout(() => {
+      isLoading = false;
+      const launchScreen = document.getElementById('launchScreen');
+      launchScreen.style.opacity = '0';
+      setTimeout(() => {
+        launchScreen.style.visibility = 'hidden';
+      }, 500);
+    }, 2000); // Minimum 2 second loading for better UX
+  }
+}
+
+// === FIXED CSV LOADING ===
+async function loadGamesFromCSV() {
+  try {
+    const response = await fetch(sheetUrl);
+    if (!response.ok) throw new Error('Network response was not ok');
+    
+    const csv = await response.text();
+    const rows = csv.trim().split("\n").slice(1); // Remove header
+    
     allGames = rows.map(row => {
-      const [name, Platform, image, link] = row.split(",");
-      return { name, Platform, image, link };
+      const [name, Platform, image, link] = row.split(",").map(field => field.trim());
+      const gameId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      
+      // Initialize ratings for each game
+      if (!gameRatings[gameId]) {
+        gameRatings[gameId] = 0;
+        gameRatings[gameId + '_count'] = 0;
+      }
+      
+      return { 
+        name: name || 'Unknown Game',
+        Platform: Platform || 'UNKNOWN',
+        image: image || 'https://via.placeholder.com/160x140/666/white?text=🎮',
+        link: link || '#',
+        id: gameId,
+        rating: gameRatings[gameId] || 0,
+        ratingCount: gameRatings[gameId + '_count'] || 0
+      };
     });
+    
+    localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
     displayGames(allGames);
-    setTimeout(() => document.getElementById("launchScreen").remove(), 2500);
-  })
-  .catch(() => {
-    document.body.innerHTML += `<p style="color:red;text-align:center;">Failed to load data 😔</p>`;
-  });
-
-function displayGames(games) {
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  games.forEach(game => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${game.image}" alt="${game.name}">
-      <div class="info">
-        <h3>${game.name}</h3>
-        <p>Platform: ${game.Platform}</p>
-      </div>
-      <a class="btn" href="${game.link}" target="_blank">Download</a>
-    `;
-    grid.appendChild(card);
-  });
+    
+  } catch (error) {
+    console.error('Error loading CSV:', error);
+    throw error; // Re-throw to trigger fallback
+  }
 }
 
-document.getElementById("searchBtn").addEventListener("click", searchGames);
-document.getElementById("searchInput").addEventListener("input", searchGames);
-document.getElementById("shuffleBtn").addEventListener("click", shuffleGames);
-
-function searchGames() {
-  const query = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = allGames.filter(g => 
-    g.name.toLowerCase().includes(query) ||
-    g.Platform.toLowerCase().includes(query)
-  );
-  displayGames(filtered);
-}
-
-function shuffleGames() {
-  allGames.sort(() => Math.random() - 0.5);
+function loadFallbackGames() {
+  allGames = [
+    {
+      id: 'fts-26',
+      name: 'FTS 26',
+      Platform: 'ANDROID',
+      image: 'https://i.postimg.cc/K8fJqv9X/IMG-20251008-162914-842.jpg',
+      link: 'https://www.mediafire.com/file/ultgiieo40to3a4/FTS+26+EUROPEU.7z/file',
+      rating: 4.5,
+      ratingCount: 1
+    },
+    {
+      id: 'gta-san-andreas', 
+      name: 'GTA SAN ANDREAS',
+      Platform: 'ANDROID',
+      image: 'https://i.postimg.cc/hGgCCC7B/IMG-20251008-133553-928.jpg',
+      link: 'https://www.mediafire.com/file/olmlnq9gmnlu95t/Grand_Theft_Auto_San_Andreas_v2.11.277_luzgamer.com.apk/file',
+      rating: 4.8,
+      ratingCount: 1
+    }
+  ];
   displayGames(allGames);
 }
 
-/* ⬆️ Back to Top */
-const backToTopBtn = document.getElementById("backToTop");
-window.addEventListener("scroll", () => {
-  backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
-});
-backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+// === FIXED GAME DISPLAY ===
+function displayGames(games) {
+  if (isLoading) return; // Prevent display during loading
+  
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  
+  grid.innerHTML = games.map(game => {
+    const isFavorite = favorites.includes(game.id);
+    const stars = Math.round(game.rating);
+    
+    return `
+      <div class="flip-card" onclick="flipCard(this)">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); toggleFavorite('${game.id}')">
+              ${isFavorite ? '❤️' : '🤍'}
+            </button>
+            <img src="${game.image}" alt="${game.name}" 
+                 onerror="this.src='https://via.placeholder.com/160x140/666/white?text=🎮'">
+            <div class="info">
+              <h3>${game.name}</h3>
+              <p>${game.Platform}</p>
+              <div class="rating-container">
+                <div class="star-rating">
+                  ${[1,2,3,4,5].map(star => 
+                    `<span class="star ${star <= stars ? 'active' : ''}">⭐</span>`
+                  ).join('')}
+                </div>
+                <div class="rating-text">
+                  ${game.rating > 0 ? `⭐ ${game.rating.toFixed(1)}/5` : 'Not rated'}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <h3>${game.name}</h3>
+            <p>${game.Platform}</p>
+            
+            <div class="game-stats">
+              <div class="stat">
+                <div class="stat-value">${game.rating > 0 ? game.rating.toFixed(1) : '-'}</div>
+                <div class="stat-label">Rating</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${game.ratingCount}</div>
+                <div class="stat-label">Votes</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${isFavorite ? '❤️' : '🤍'}</div>
+                <div class="stat-label">Favorite</div>
+              </div>
+            </div>
 
-/* 🌙 Theme Toggle */
-const themeBtn = document.getElementById("themeToggle");
-themeBtn.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  themeBtn.textContent = document.body.classList.contains("dark") ? "🌙" : "🌞";
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-});
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-  themeBtn.textContent = "🌙";
+            <a class="btn btn-primary" href="${game.link}" target="_blank" onclick="event.stopPropagation()">
+              🎮 Download Now
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-/* 📦 Service Worker */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+// === SIDEBAR FUNCTIONALITY ===
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+}
+
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+// === SECTION MANAGEMENT ===
+function showSection(section) {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+  
+  if (window.innerWidth <= 768) {
+    closeSidebar();
+  }
+  
+  // For now, just show all games
+  displayGames(allGames);
+}
+
+// === THEME TOGGLE ===
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '🌞';
+  document.getElementById('themeText').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+}
+
+// Initialize theme
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+  document.getElementById('themeIcon').textContent = '🌙';
+  document.getElementById('themeText').textContent = 'Dark Mode';
+}
+
+// === MODAL FUNCTIONS ===
+function showAuthModal() {
+  closeSidebar();
+  document.getElementById('authModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+
+// === USER AUTHENTICATION ===
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  
+  if (email && password) {
+    currentUser = {
+      id: Date.now().toString(),
+      name: email.split('@')[0],
+      email: email,
+      avatar: email[0].toUpperCase(),
+      joinDate: new Date().toISOString()
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    updateUserInterface();
+    closeModal('authModal');
+    unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
+  }
+}
+
+function register() {
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  
+  if (name && email && password) {
+    currentUser = {
+      id: Date.now().toString(),
+      name: name,
+      email: email,
+      avatar: name[0].toUpperCase(),
+      joinDate: new Date().toISOString()
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    updateUserInterface();
+    closeModal('authModal');
+    unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
+  }
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  updateUserInterface();
+}
+
+function updateUserInterface() {
+  if (currentUser) {
+    document.getElementById('authButtons').style.display = 'none';
+    document.getElementById('userProfile').style.display = 'flex';
+    document.getElementById('userAvatar').textContent = currentUser.avatar;
+  } else {
+    document.getElementById('authButtons').style.display = 'flex';
+    document.getElementById('userProfile').style.display = 'none';
+  }
+}
+
+// === GAME ACTIONS ===
+function flipCard(card) {
+  if (isLoading) return;
+  card.classList.toggle('flipped');
+  playSound('flipSound');
+}
+
+function toggleFavorite(gameId) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const index = favorites.indexOf(gameId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(gameId);
+    playSound('favoriteSound');
+  }
+  
+  localStorage.setItem('gameFavorites', JSON.stringify(favorites));
+  displayGames(allGames); // Refresh display
+}
+
+function filterGames(type) {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+  
+  let filteredGames = allGames;
+  
+  switch(type) {
+    case 'favorites':
+      filteredGames = allGames.filter(game => favorites.includes(game.id));
+      break;
+    case 'top-rated':
+      filteredGames = allGames.filter(game => game.rating >= 4)
+                   .sort((a, b) => b.rating - a.rating);
+      break;
+  }
+  
+  displayGames(filteredGames);
+}
+
+function shuffleGames() {
+  const shuffled = [...allGames].sort(() => Math.random() - 0.5);
+  displayGames(shuffled);
+  playSound('favoriteSound');
+}
+
+function feelingLucky() {
+  if (allGames.length > 0) {
+    const randomGame = [allGames[Math.floor(Math.random() * allGames.length)]];
+    displayGames(randomGame);
+    playSound('achievementSound');
+    unlockAchievement('lucky', 'Feeling Lucky!', 'Discover a random game!');
+  }
+}
+
+// === ACHIEVEMENT SYSTEM ===
+let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
+
+function unlockAchievement(achievementId, title, description) {
+  if (!achievements[achievementId]) {
+    achievements[achievementId] = true;
+    localStorage.setItem('achievements', JSON.stringify(achievements));
+    
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #FFD700, #FFA000);
+      color: #333;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+      z-index: 1000;
+      animation: slideInRight 0.5s ease;
+    `;
+    toast.innerHTML = `
+      <strong>🏆 ${title}</strong>
+      <div>${description}</div>
+    `;
+    document.body.appendChild(toast);
+    
+    playSound('achievementSound');
+    
+    setTimeout(() => {
+      toast.remove();
+    }, 4000);
+  }
+}
+
+// === SOUND SYSTEM ===
+function playSound(soundId) {
+  try {
+    const sound = document.getElementById(soundId);
+    sound.currentTime = 0;
+    sound.play().catch(e => console.log('Sound play failed:', e));
+  } catch (e) {
+    console.log('Sound error:', e);
+  }
+}
+
+// === INITIALIZE APP ===
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+// Close modals when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal')) {
+    e.target.style.display = 'none';
+  }
+});
+
+// Search functionality
+document.getElementById('searchBtn').addEventListener('click', searchGames);
+document.getElementById('searchInput').addEventListener('input', searchGames);
+
+function searchGames() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = allGames.filter(game => 
+    game.name.toLowerCase().includes(query) ||
+    game.Platform.toLowerCase().includes(query)
+  );
+  displayGames(filtered);
 }
 </script>
 </body>
