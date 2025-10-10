@@ -152,6 +152,72 @@
     font-size: 12px;
   }
 
+  /* === USER PROFILE IN SIDEBAR === */
+  .sidebar-user {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-user.active {
+    display: flex;
+  }
+
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border: 2px solid var(--primary);
+    overflow: hidden;
+  }
+
+  .user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .user-info {
+    flex: 1;
+  }
+
+  .user-name {
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+  }
+
+  .user-email {
+    color: var(--gray);
+    font-size: 12px;
+  }
+
+  .logout-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    background: rgba(255,255,255,0.3);
+  }
+
   /* === HEADER === */
   .header {
     display: flex;
@@ -219,6 +285,13 @@
     font-weight: bold;
     cursor: pointer;
     border: 2px solid var(--primary);
+    overflow: hidden;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* === ENHANCED LAUNCH SCREEN === */
@@ -667,6 +740,50 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   }
 
+  /* === PROFILE PHOTO UPLOAD === */
+  .avatar-upload {
+    text-align: center;
+    margin: 15px 0;
+  }
+
+  .avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    border: 3px solid var(--primary);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .upload-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .upload-btn:hover {
+    background: var(--secondary);
+  }
+
   /* === RESPONSIVE DESIGN === */
   @media (max-width: 768px) {
     .sidebar {
@@ -734,8 +851,20 @@
     <div class="sidebar-tagline">Your Gaming Community</div>
   </div>
   
+  <!-- User Profile in Sidebar -->
+  <div class="sidebar-user" id="sidebarUser">
+    <div class="user-avatar" id="sidebarUserAvatar">
+      <!-- Profile photo will be loaded here -->
+    </div>
+    <div class="user-info">
+      <div class="user-name" id="sidebarUserName">User Name</div>
+      <div class="user-email" id="sidebarUserEmail">user@email.com</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+  
   <nav class="sidebar-nav">
-    <div class="nav-item" onclick="showAuthModal()">
+    <div class="nav-item" onclick="showAuthModal()" id="sidebarLoginItem">
       <span class="nav-icon">👤</span>
       <span class="nav-text">Login / Sign Up</span>
     </div>
@@ -789,9 +918,9 @@
       <button onclick="showAuthModal()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer;">Login</button>
     </div>
     <div class="user-profile" id="userProfile">
-      <div class="avatar" id="userAvatar">U</div>
-      <span id="userName" style="font-weight: bold;"></span>
-      <button onclick="logout()" style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 15px; cursor: pointer;">Logout</button>
+      <div class="avatar" id="userAvatar">
+        <!-- Profile photo will be loaded here -->
+      </div>
     </div>
   </div>
 </div>
@@ -832,6 +961,15 @@
         <p style="text-align: center; margin: 15px 0; color: var(--text-secondary);">New here? <a href="#" onclick="showRegister()" style="color: var(--primary);">Join the Community</a></p>
       </div>
       <div id="registerForm" style="display: none;">
+        <!-- Profile Photo Upload in Registration -->
+        <div class="avatar-upload">
+          <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
+            <span>+</span>
+          </div>
+          <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+          <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">Upload Photo</button>
+        </div>
+        
         <input type="text" id="registerName" placeholder="Gamer Tag" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
         <input type="email" id="registerEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
         <input type="password" id="registerPassword" placeholder="Password" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
@@ -849,7 +987,7 @@
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-// === GAMING HOOD - PROPER AUTH & RATINGS FIXED ===
+// === GAMING HOOD - AUTO LOADING + PROFILE PHOTOS FIXED ===
 
 // Initialize particles
 particlesJS('particles-js', {
@@ -885,20 +1023,21 @@ let favorites = JSON.parse(localStorage.getItem('gameFavorites')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let gameRatings = JSON.parse(localStorage.getItem('gameRatings')) || {};
 let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || {};
+let avatarFile = null;
 
-// === FIXED LOADING SYSTEM ===
+// === FIXED AUTO-LOADING SYSTEM ===
 let isLoading = true;
 
 async function initializeApp() {
   try {
     await loadGamesFromCSV();
-    // AUTO DISPLAY GAMES ON LOAD - NO NEED TO CLICK BUTTON
-    displayGames(allGames);
   } catch (error) {
     console.error('Failed to load games:', error);
     loadFallbackGames();
-    displayGames(allGames);
   } finally {
+    // AUTO DISPLAY GAMES IMMEDIATELY AFTER LOADING
+    displayGames(allGames);
+    
     setTimeout(() => {
       isLoading = false;
       const launchScreen = document.getElementById('launchScreen');
@@ -976,12 +1115,15 @@ function loadFallbackGames() {
   ];
 }
 
-// === FIXED GAME DISPLAY WITH INTERACTIVE RATINGS ===
+// === FIXED GAME DISPLAY WITH AUTO-LOADING ===
 function displayGames(games) {
-  if (isLoading) return;
-  
   const grid = document.getElementById('grid');
-  if (!grid) return;
+  if (!grid) {
+    console.log('Grid element not found!');
+    return;
+  }
+  
+  console.log('Displaying games:', games.length);
   
   grid.innerHTML = games.map(game => {
     const isFavorite = favorites.includes(game.id);
@@ -1056,57 +1198,44 @@ function displayGames(games) {
   }).join('');
 }
 
-// === FIXED RATING SYSTEM ===
-function rateGame(gameId, rating) {
-  if (!currentUser) {
-    showAuthModal();
-    return;
+// === PROFILE PHOTO FUNCTIONALITY ===
+function previewAvatar(event) {
+  const file = event.target.files[0];
+  if (file) {
+    avatarFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const avatarPreview = document.getElementById('avatarPreview');
+      avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview">`;
+    };
+    reader.readAsDataURL(file);
   }
-  
-  const game = allGames.find(g => g.id === gameId);
-  if (!game) return;
-  
-  // Get previous user rating if exists
-  const previousRating = gameRatings[gameId + '_users']?.[currentUser.id] || 0;
-  
-  // Update user's rating
-  if (!gameRatings[gameId + '_users']) {
-    gameRatings[gameId + '_users'] = {};
+}
+
+function getAvatarUrl(user) {
+  if (user.avatarUrl) {
+    return user.avatarUrl;
   }
-  gameRatings[gameId + '_users'][currentUser.id] = rating;
+  // Create a colored gradient based on user name
+  const colors = ['#FF6B35', '#00A8E8', '#00E676', '#FF4081', '#9C27B0'];
+  const colorIndex = user.name.charCodeAt(0) % colors.length;
+  return `linear-gradient(45deg, ${colors[colorIndex]}, ${colors[(colorIndex + 1) % colors.length]})`;
+}
+
+function updateAvatarDisplay() {
+  const userAvatar = document.getElementById('userAvatar');
+  const sidebarUserAvatar = document.getElementById('sidebarUserAvatar');
   
-  // Update total and count
-  let total = gameRatings[gameId + '_total'] || 0;
-  let count = gameRatings[gameId + '_count'] || 0;
-  
-  // Remove previous rating from total if exists
-  if (previousRating > 0) {
-    total -= previousRating;
-  } else {
-    count += 1; // New rating
-  }
-  
-  // Add new rating
-  total += rating;
-  
-  // Update stored values
-  gameRatings[gameId + '_total'] = total;
-  gameRatings[gameId + '_count'] = count;
-  gameRatings[gameId] = count > 0 ? total / count : 0;
-  
-  // Update game object
-  game.rating = gameRatings[gameId];
-  game.ratingCount = count;
-  
-  // Save to localStorage
-  localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
-  
-  // Refresh display
-  displayGames(allGames);
-  
-  // Achievement
-  if (count === 1) {
-    unlockAchievement('first_rating', 'Game Critic!', 'You rated your first game!');
+  if (currentUser) {
+    if (currentUser.avatarUrl) {
+      userAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}">`;
+      sidebarUserAvatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="${currentUser.name}">`;
+    } else {
+      userAvatar.innerHTML = currentUser.avatar;
+      sidebarUserAvatar.innerHTML = currentUser.avatar;
+      userAvatar.style.background = getAvatarUrl(currentUser);
+      sidebarUserAvatar.style.background = getAvatarUrl(currentUser);
+    }
   }
 }
 
@@ -1123,6 +1252,8 @@ function closeModal(modalId) {
 function showLogin() {
   document.getElementById('loginForm').style.display = 'block';
   document.getElementById('registerForm').style.display = 'none';
+  avatarFile = null;
+  document.getElementById('avatarPreview').innerHTML = '<span>+</span>';
 }
 
 function showRegister() {
@@ -1147,6 +1278,7 @@ function login() {
       name: user.name,
       email: user.email,
       avatar: user.avatar,
+      avatarUrl: user.avatarUrl,
       joinDate: user.joinDate
     };
     
@@ -1181,12 +1313,29 @@ function register() {
   
   // Create new user
   const userId = Date.now().toString();
+  let avatarUrl = null;
+  
+  // Handle avatar upload
+  if (avatarFile) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      avatarUrl = e.target.result;
+      completeRegistration(userId, name, email, password, avatarUrl);
+    };
+    reader.readAsDataURL(avatarFile);
+  } else {
+    completeRegistration(userId, name, email, password, null);
+  }
+}
+
+function completeRegistration(userId, name, email, password, avatarUrl) {
   userDatabase[email] = {
     id: userId,
     name: name,
     email: email,
-    password: password, // In real app, this should be hashed!
+    password: password,
     avatar: name[0].toUpperCase(),
+    avatarUrl: avatarUrl,
     joinDate: new Date().toISOString()
   };
   
@@ -1197,6 +1346,7 @@ function register() {
     name: name,
     email: email,
     avatar: name[0].toUpperCase(),
+    avatarUrl: avatarUrl,
     joinDate: new Date().toISOString()
   };
   
@@ -1209,6 +1359,8 @@ function register() {
   document.getElementById('registerName').value = '';
   document.getElementById('registerEmail').value = '';
   document.getElementById('registerPassword').value = '';
+  avatarFile = null;
+  document.getElementById('avatarPreview').innerHTML = '<span>+</span>';
 }
 
 function logout() {
@@ -1216,17 +1368,25 @@ function logout() {
   localStorage.removeItem('currentUser');
   updateUserInterface();
   displayGames(allGames); // Refresh to show login prompts
+  closeSidebar();
 }
 
 function updateUserInterface() {
   if (currentUser) {
     document.getElementById('authButtons').style.display = 'none';
     document.getElementById('userProfile').style.display = 'flex';
-    document.getElementById('userAvatar').textContent = currentUser.avatar;
-    document.getElementById('userName').textContent = currentUser.name;
+    document.getElementById('sidebarUser').classList.add('active');
+    document.getElementById('sidebarLoginItem').style.display = 'none';
+    
+    document.getElementById('sidebarUserName').textContent = currentUser.name;
+    document.getElementById('sidebarUserEmail').textContent = currentUser.email;
+    
+    updateAvatarDisplay();
   } else {
     document.getElementById('authButtons').style.display = 'flex';
     document.getElementById('userProfile').style.display = 'none';
+    document.getElementById('sidebarUser').classList.remove('active');
+    document.getElementById('sidebarLoginItem').style.display = 'flex';
   }
 }
 
@@ -1348,6 +1508,60 @@ function feelingLucky() {
     displayGames(randomGame);
     playSound('achievementSound');
     unlockAchievement('lucky', 'Feeling Lucky!', 'Discover a random game!');
+  }
+}
+
+// === FIXED RATING SYSTEM ===
+function rateGame(gameId, rating) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const game = allGames.find(g => g.id === gameId);
+  if (!game) return;
+  
+  // Get previous user rating if exists
+  const previousRating = gameRatings[gameId + '_users']?.[currentUser.id] || 0;
+  
+  // Update user's rating
+  if (!gameRatings[gameId + '_users']) {
+    gameRatings[gameId + '_users'] = {};
+  }
+  gameRatings[gameId + '_users'][currentUser.id] = rating;
+  
+  // Update total and count
+  let total = gameRatings[gameId + '_total'] || 0;
+  let count = gameRatings[gameId + '_count'] || 0;
+  
+  // Remove previous rating from total if exists
+  if (previousRating > 0) {
+    total -= previousRating;
+  } else {
+    count += 1; // New rating
+  }
+  
+  // Add new rating
+  total += rating;
+  
+  // Update stored values
+  gameRatings[gameId + '_total'] = total;
+  gameRatings[gameId + '_count'] = count;
+  gameRatings[gameId] = count > 0 ? total / count : 0;
+  
+  // Update game object
+  game.rating = gameRatings[gameId];
+  game.ratingCount = count;
+  
+  // Save to localStorage
+  localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
+  
+  // Refresh display
+  displayGames(allGames);
+  
+  // Achievement
+  if (count === 1) {
+    unlockAchievement('first_rating', 'Game Critic!', 'You rated your first game!');
   }
 }
 
