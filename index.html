@@ -552,7 +552,7 @@
     margin: 0 0 8px; 
   }
 
-  /* === RATING SYSTEM === */
+  /* === INTERACTIVE RATING SYSTEM === */
   .rating-container {
     margin: 8px 0;
     text-align: center;
@@ -569,10 +569,18 @@
     color: #ddd;
     font-size: 14px;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .star:hover {
+    transform: scale(1.3);
+    color: #FFD700;
   }
 
   .star.active {
     color: #FFD700;
+    transform: scale(1.1);
   }
 
   .rating-text {
@@ -782,6 +790,7 @@
     </div>
     <div class="user-profile" id="userProfile">
       <div class="avatar" id="userAvatar">U</div>
+      <span id="userName" style="font-weight: bold;"></span>
       <button onclick="logout()" style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 15px; cursor: pointer;">Logout</button>
     </div>
   </div>
@@ -840,7 +849,7 @@
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-// === GAMING HOOD - BUG FIXES APPLIED ===
+// === GAMING HOOD - PROPER AUTH & RATINGS FIXED ===
 
 // Initialize particles
 particlesJS('particles-js', {
@@ -869,12 +878,13 @@ particlesJS('particles-js', {
   }
 });
 
-// === FIXED GAME DATA LOADING ===
+// === FIXED DATA STORAGE ===
 const sheetUrl = "https://docs.google.com/spreadsheets/d/1USDHhOVNWZQczP9uhHLv7Vscr3wP-qzGemkggbQLU9I/export?format=csv";
 let allGames = [];
 let favorites = JSON.parse(localStorage.getItem('gameFavorites')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let gameRatings = JSON.parse(localStorage.getItem('gameRatings')) || {};
+let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || {};
 
 // === FIXED LOADING SYSTEM ===
 let isLoading = true;
@@ -882,11 +892,13 @@ let isLoading = true;
 async function initializeApp() {
   try {
     await loadGamesFromCSV();
+    // AUTO DISPLAY GAMES ON LOAD - NO NEED TO CLICK BUTTON
+    displayGames(allGames);
   } catch (error) {
     console.error('Failed to load games:', error);
     loadFallbackGames();
+    displayGames(allGames);
   } finally {
-    // Ensure loading screen stays for minimum time
     setTimeout(() => {
       isLoading = false;
       const launchScreen = document.getElementById('launchScreen');
@@ -894,8 +906,11 @@ async function initializeApp() {
       setTimeout(() => {
         launchScreen.style.visibility = 'hidden';
       }, 500);
-    }, 2000); // Minimum 2 second loading for better UX
+    }, 2000);
   }
+  
+  // Initialize user interface
+  updateUserInterface();
 }
 
 // === FIXED CSV LOADING ===
@@ -905,7 +920,7 @@ async function loadGamesFromCSV() {
     if (!response.ok) throw new Error('Network response was not ok');
     
     const csv = await response.text();
-    const rows = csv.trim().split("\n").slice(1); // Remove header
+    const rows = csv.trim().split("\n").slice(1);
     
     allGames = rows.map(row => {
       const [name, Platform, image, link] = row.split(",").map(field => field.trim());
@@ -915,6 +930,8 @@ async function loadGamesFromCSV() {
       if (!gameRatings[gameId]) {
         gameRatings[gameId] = 0;
         gameRatings[gameId + '_count'] = 0;
+        gameRatings[gameId + '_total'] = 0;
+        gameRatings[gameId + '_users'] = {};
       }
       
       return { 
@@ -929,11 +946,10 @@ async function loadGamesFromCSV() {
     });
     
     localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
-    displayGames(allGames);
     
   } catch (error) {
     console.error('Error loading CSV:', error);
-    throw error; // Re-throw to trigger fallback
+    throw error;
   }
 }
 
@@ -958,19 +974,19 @@ function loadFallbackGames() {
       ratingCount: 1
     }
   ];
-  displayGames(allGames);
 }
 
-// === FIXED GAME DISPLAY ===
+// === FIXED GAME DISPLAY WITH INTERACTIVE RATINGS ===
 function displayGames(games) {
-  if (isLoading) return; // Prevent display during loading
+  if (isLoading) return;
   
   const grid = document.getElementById('grid');
   if (!grid) return;
   
   grid.innerHTML = games.map(game => {
     const isFavorite = favorites.includes(game.id);
-    const stars = Math.round(game.rating);
+    const userRating = currentUser ? (gameRatings[game.id + '_users']?.[currentUser.id] || 0) : 0;
+    const averageRating = game.rating;
     
     return `
       <div class="flip-card" onclick="flipCard(this)">
@@ -988,11 +1004,13 @@ function displayGames(games) {
               <div class="rating-container">
                 <div class="star-rating">
                   ${[1,2,3,4,5].map(star => 
-                    `<span class="star ${star <= stars ? 'active' : ''}">⭐</span>`
+                    `<span class="star ${star <= userRating ? 'active' : ''} ${star <= Math.round(averageRating) ? 'community-rated' : ''}" 
+                          onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
                   ).join('')}
                 </div>
                 <div class="rating-text">
-                  ${game.rating > 0 ? `⭐ ${game.rating.toFixed(1)}/5` : 'Not rated'}
+                  ${averageRating > 0 ? `⭐ ${averageRating.toFixed(1)}/5 (${game.ratingCount})` : 'Not rated yet'}
+                  ${userRating > 0 ? `<br><small>Your: ${userRating}/5</small>` : ''}
                 </div>
               </div>
             </div>
@@ -1003,7 +1021,7 @@ function displayGames(games) {
             
             <div class="game-stats">
               <div class="stat">
-                <div class="stat-value">${game.rating > 0 ? game.rating.toFixed(1) : '-'}</div>
+                <div class="stat-value">${averageRating > 0 ? averageRating.toFixed(1) : '-'}</div>
                 <div class="stat-label">Rating</div>
               </div>
               <div class="stat">
@@ -1019,11 +1037,197 @@ function displayGames(games) {
             <a class="btn btn-primary" href="${game.link}" target="_blank" onclick="event.stopPropagation()">
               🎮 Download Now
             </a>
+            
+            ${currentUser ? `
+              <div class="rating-container">
+                <small>Rate this game:</small>
+                <div class="star-rating">
+                  ${[1,2,3,4,5].map(star => 
+                    `<span class="star ${star <= userRating ? 'active' : ''}" 
+                          onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
+                  ).join('')}
+                </div>
+              </div>
+            ` : ''}
           </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+// === FIXED RATING SYSTEM ===
+function rateGame(gameId, rating) {
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  const game = allGames.find(g => g.id === gameId);
+  if (!game) return;
+  
+  // Get previous user rating if exists
+  const previousRating = gameRatings[gameId + '_users']?.[currentUser.id] || 0;
+  
+  // Update user's rating
+  if (!gameRatings[gameId + '_users']) {
+    gameRatings[gameId + '_users'] = {};
+  }
+  gameRatings[gameId + '_users'][currentUser.id] = rating;
+  
+  // Update total and count
+  let total = gameRatings[gameId + '_total'] || 0;
+  let count = gameRatings[gameId + '_count'] || 0;
+  
+  // Remove previous rating from total if exists
+  if (previousRating > 0) {
+    total -= previousRating;
+  } else {
+    count += 1; // New rating
+  }
+  
+  // Add new rating
+  total += rating;
+  
+  // Update stored values
+  gameRatings[gameId + '_total'] = total;
+  gameRatings[gameId + '_count'] = count;
+  gameRatings[gameId] = count > 0 ? total / count : 0;
+  
+  // Update game object
+  game.rating = gameRatings[gameId];
+  game.ratingCount = count;
+  
+  // Save to localStorage
+  localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
+  
+  // Refresh display
+  displayGames(allGames);
+  
+  // Achievement
+  if (count === 1) {
+    unlockAchievement('first_rating', 'Game Critic!', 'You rated your first game!');
+  }
+}
+
+// === FIXED AUTHENTICATION SYSTEM ===
+function showAuthModal() {
+  closeSidebar();
+  document.getElementById('authModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  
+  if (!email || !password) {
+    alert('Please enter both email and password!');
+    return;
+  }
+  
+  // Check if user exists and password matches
+  const user = userDatabase[email];
+  if (user && user.password === password) {
+    currentUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      joinDate: user.joinDate
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    updateUserInterface();
+    closeModal('authModal');
+    unlockAchievement('welcome_back', 'Welcome Back!', 'You logged in successfully!');
+    
+    // Clear form
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+  } else {
+    alert('Invalid email or password! Please try again or register.');
+  }
+}
+
+function register() {
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  
+  if (!name || !email || !password) {
+    alert('Please fill in all fields!');
+    return;
+  }
+  
+  if (userDatabase[email]) {
+    alert('Email already registered! Please login instead.');
+    showLogin();
+    return;
+  }
+  
+  // Create new user
+  const userId = Date.now().toString();
+  userDatabase[email] = {
+    id: userId,
+    name: name,
+    email: email,
+    password: password, // In real app, this should be hashed!
+    avatar: name[0].toUpperCase(),
+    joinDate: new Date().toISOString()
+  };
+  
+  localStorage.setItem('userDatabase', JSON.stringify(userDatabase));
+  
+  currentUser = {
+    id: userId,
+    name: name,
+    email: email,
+    avatar: name[0].toUpperCase(),
+    joinDate: new Date().toISOString()
+  };
+  
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  updateUserInterface();
+  closeModal('authModal');
+  unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
+  
+  // Clear form
+  document.getElementById('registerName').value = '';
+  document.getElementById('registerEmail').value = '';
+  document.getElementById('registerPassword').value = '';
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  updateUserInterface();
+  displayGames(allGames); // Refresh to show login prompts
+}
+
+function updateUserInterface() {
+  if (currentUser) {
+    document.getElementById('authButtons').style.display = 'none';
+    document.getElementById('userProfile').style.display = 'flex';
+    document.getElementById('userAvatar').textContent = currentUser.avatar;
+    document.getElementById('userName').textContent = currentUser.name;
+  } else {
+    document.getElementById('authButtons').style.display = 'flex';
+    document.getElementById('userProfile').style.display = 'none';
+  }
 }
 
 // === SIDEBAR FUNCTIONALITY ===
@@ -1054,8 +1258,19 @@ function showSection(section) {
     closeSidebar();
   }
   
-  // For now, just show all games
-  displayGames(allGames);
+  let filteredGames = allGames;
+  
+  switch(section) {
+    case 'favorites':
+      filteredGames = allGames.filter(game => favorites.includes(game.id));
+      break;
+    case 'top-rated':
+      filteredGames = allGames.filter(game => game.rating >= 4)
+                   .sort((a, b) => b.rating - a.rating);
+      break;
+  }
+  
+  displayGames(filteredGames);
 }
 
 // === THEME TOGGLE ===
@@ -1073,85 +1288,6 @@ if (localStorage.getItem('theme') === 'dark') {
   document.body.classList.add('dark');
   document.getElementById('themeIcon').textContent = '🌙';
   document.getElementById('themeText').textContent = 'Dark Mode';
-}
-
-// === MODAL FUNCTIONS ===
-function showAuthModal() {
-  closeSidebar();
-  document.getElementById('authModal').style.display = 'block';
-}
-
-function closeModal(modalId) {
-  document.getElementById(modalId).style.display = 'none';
-}
-
-function showLogin() {
-  document.getElementById('loginForm').style.display = 'block';
-  document.getElementById('registerForm').style.display = 'none';
-}
-
-function showRegister() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('registerForm').style.display = 'block';
-}
-
-// === USER AUTHENTICATION ===
-function login() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  
-  if (email && password) {
-    currentUser = {
-      id: Date.now().toString(),
-      name: email.split('@')[0],
-      email: email,
-      avatar: email[0].toUpperCase(),
-      joinDate: new Date().toISOString()
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    updateUserInterface();
-    closeModal('authModal');
-    unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
-  }
-}
-
-function register() {
-  const name = document.getElementById('registerName').value;
-  const email = document.getElementById('registerEmail').value;
-  const password = document.getElementById('registerPassword').value;
-  
-  if (name && email && password) {
-    currentUser = {
-      id: Date.now().toString(),
-      name: name,
-      email: email,
-      avatar: name[0].toUpperCase(),
-      joinDate: new Date().toISOString()
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    updateUserInterface();
-    closeModal('authModal');
-    unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
-  }
-}
-
-function logout() {
-  currentUser = null;
-  localStorage.removeItem('currentUser');
-  updateUserInterface();
-}
-
-function updateUserInterface() {
-  if (currentUser) {
-    document.getElementById('authButtons').style.display = 'none';
-    document.getElementById('userProfile').style.display = 'flex';
-    document.getElementById('userAvatar').textContent = currentUser.avatar;
-  } else {
-    document.getElementById('authButtons').style.display = 'flex';
-    document.getElementById('userProfile').style.display = 'none';
-  }
 }
 
 // === GAME ACTIONS ===
@@ -1176,7 +1312,7 @@ function toggleFavorite(gameId) {
   }
   
   localStorage.setItem('gameFavorites', JSON.stringify(favorites));
-  displayGames(allGames); // Refresh display
+  displayGames(allGames);
 }
 
 function filterGames(type) {
